@@ -12,9 +12,23 @@ Questo repository è la **fonte di verità ufficiale** per:
 
 ## 📘 Documento Principale
 
-**[MASTER_SYSTEM_PLAN_DMS_MIO-HUB.md](MASTER_SYSTEM_PLAN_DMS_MIO-HUB.md)**
+**[MASTER SYSTEM PLAN v2 - DMS / MIO-HUB](docs/MASTER%20SYSTEM%20PLAN%20v2%20-%20DMS%20_%20MIO-HUB.md)**
 
-Questo è il **documento unico e ufficiale** che unifica visione, architettura, modello dati e roadmap. È il punto di riferimento per tutti gli stakeholder (umani e AI).
+Questo è il **documento unico e ufficiale** (v2) che definisce l'intero ecosistema. È il punto di riferimento per tutti gli stakeholder (umani e AI).
+
+**Stato:** APPROVED  
+**Owner:** Chcndr  
+**Executor:** Manus / ABACUS
+
+---
+
+## Priorità Assoluta: Pepe GIS
+
+La **Fase 1** del piano è l'integrazione di Pepe GIS nella Dashboard:
+- Import della pianta del mercato dall'Editor v3
+- Salvataggio geometrie piazzole in Postgres (Neon) come GeoJSON/JSONB
+- API per servire la mappa alla dashboard
+- Pagina "Mappa Mercato / GIS" su DMS-HUB / MIO-HUB
 
 ---
 
@@ -22,8 +36,8 @@ Questo è il **documento unico e ufficiale** che unifica visione, architettura, 
 
 ```
 dms-system-blueprint/
-├── MASTER_SYSTEM_PLAN_DMS_MIO-HUB.md  # 📘 DOCUMENTO PRINCIPALE
 ├── docs/
+│   ├── MASTER SYSTEM PLAN v2 - DMS _ MIO-HUB.md  # 📘 PIANO UNICO
 │   ├── AS-IS/              # Analisi dello stato attuale
 │   │   ├── 00-overview.md
 │   │   ├── 01-sistemi-e-ambienti.md
@@ -44,26 +58,25 @@ dms-system-blueprint/
 
 ---
 
-## Decisioni Architetturali Non Negoziabili
+## Principi Architetturali Non Negoziabili
 
-1. **Database Unico**: PostgreSQL (niente più PlanetScale/MySQL)
-2. **DMS Core API** (Hetzner): Unico cervello del sistema, tutta la business logic vive qui
-3. **Frontend** (Next.js su Vercel): Solo UI, parla SOLO con DMS Core API, niente accesso diretto a DB
-4. **DMS Legacy** (Heroku): Sistema esterno da integrare, non più il centro del mondo
-5. **App DMS Ambulanti**: Nel TO-BE parla con Core API, non con il gestionale legacy
-6. **Pepe GIS**: Motore per la creazione e visualizzazione delle mappe dei mercati
+1. **Un solo DB per il nuovo mondo**: Postgres (Neon) - eliminare PlanetScale/MySQL
+2. **API-first**: Frontend parla SOLO con Core API, niente accessi diretti al DB
+3. **Legacy isolato**: DMS Heroku è sistema esterno da integrare
+4. **GIS di prima classe**: Le piazzole hanno geometria, non sono solo righe in tabella
 
 ---
 
 ## Roadmap (Sintesi)
 
-- **Fase 0**: Base tecnica pulita (standardizzazione PostgreSQL, pulizia configurazioni)
-- **Fase 1**: Integrazione Pepe GIS come primo caso d'uso forte (PRIORITÀ)
-- **Fase 2**: Copia e allineamento del gestionale DMS (Heroku)
-- **Fase 3**: Nuovo gestionale dentro la Dashboard / MIO-HUB
-- **Fase 4**: Feature avanzate (CO₂, wallet, automazioni)
+- **Fase 0**: Allineamento tecnico (pulizia DB, Drizzle solo Postgres)
+- **Fase 1**: **PEPE GIS** (PRIORITÀ ASSOLUTA)
+- **Fase 2**: Analisi & copia logiche DMS legacy (Heroku)
+- **Fase 3**: Nuovo Core gestionale
+- **Fase 4**: Allineamento App ambulanti
+- **Fase 5**: Pulizia finale e sunset del legacy
 
-*Per i dettagli completi, vedere il [MASTER_SYSTEM_PLAN_DMS_MIO-HUB.md](MASTER_SYSTEM_PLAN_DMS_MIO-HUB.md).*
+*Per i dettagli completi, vedere il [MASTER SYSTEM PLAN v2](docs/MASTER%20SYSTEM%20PLAN%20v2%20-%20DMS%20_%20MIO-HUB.md).*
 
 ---
 
@@ -75,21 +88,17 @@ dms-system-blueprint/
 | **Dashboard / MIO-HUB** | Vercel | Interfaccia web amministrativa | TO-BE |
 | **DMS Legacy** | Heroku | Gestionale esistente | AS-IS (da integrare) |
 | **App Mobile DMS** | - | App per ambulanti | AS-IS (da migrare) |
-| **Database** | Hetzner/Neon | PostgreSQL unico | TO-BE |
+| **Database** | Neon | PostgreSQL unico | TO-BE |
 | **Pepe GIS** | - | Motore mappe mercati | TO-BE |
 
 ---
 
-## Come Usare Questo Repository
+## Regole per il Repository
 
-Questo repository è il **manuale di bordo del sistema**. Deve essere aggiornato man mano che:
-- Si analizza il gestionale DMS legacy
-- Si scoprono dettagli tecnici
-- Si modifica architettura e codice
-
-**Regola d'oro**: Se cambi una decisione tecnica importante:
-1. Aggiorna prima il `MASTER_SYSTEM_PLAN_DMS_MIO-HUB.md`
-2. Poi adegua il codice
+- Tutte le decisioni architetturali vanno qui, non sparse in chat
+- Quando si scopre qualcosa di nuovo (tabella, regola di business):
+  - Aggiornare i documenti nel repo
+  - Nessun "piano parallelo": il MASTER SYSTEM PLAN v2 è il riferimento unico
 
 ---
 
