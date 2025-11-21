@@ -1,6 +1,6 @@
 # DMS System Blueprint
 
-**Repository ufficiale** per l'architettura e la documentazione del sistema DMS (Dealer Management System) per la gestione dei mercati ambulanti.
+**Repository ufficiale** per l'architettura e la documentazione del sistema DMS / MIO-HUB per la gestione dei mercati ambulanti.
 
 Questo repository è la **fonte di verità ufficiale** per:
 - Architettura AS-IS (stato attuale del sistema)
@@ -10,10 +10,19 @@ Questo repository è la **fonte di verità ufficiale** per:
 
 ---
 
+## 📘 Documento Principale
+
+**[MASTER_SYSTEM_PLAN_DMS_MIO-HUB.md](MASTER_SYSTEM_PLAN_DMS_MIO-HUB.md)**
+
+Questo è il **documento unico e ufficiale** che unifica visione, architettura, modello dati e roadmap. È il punto di riferimento per tutti gli stakeholder (umani e AI).
+
+---
+
 ## Struttura del Repository
 
 ```
 dms-system-blueprint/
+├── MASTER_SYSTEM_PLAN_DMS_MIO-HUB.md  # 📘 DOCUMENTO PRINCIPALE
 ├── docs/
 │   ├── AS-IS/              # Analisi dello stato attuale
 │   │   ├── 00-overview.md
@@ -22,40 +31,16 @@ dms-system-blueprint/
 │   │   ├── 03-modello-dati-e-mapping.md
 │   │   ├── 04-architettura-tecnica.md
 │   │   ├── 05-integrazioni-esterne.md
-│   │   └── 06-roadmap.md
+│   │   ├── 06-roadmap.md
+│   │   └── 07-analisi-codice-esistente.md
 │   └── TO-BE/              # Progetto finale del sistema
 │       ├── MASTER-SYSTEM-DESIGN.md
-│       ├── 03-modello-dati-e-mapping.md
-│       └── 06-roadmap-tecnica.md
+│       └── 03-modello-dati-e-mapping.md
 └── references/             # File di riferimento
     ├── SYSTEM_BLUEPRINT_AS_IS.md
     ├── ANALISI_DMS_LEGACY_COMPLETA.md
-    ├── Anagrafiche_API_DMS.xlsx (da aggiungere)
     └── screenshot_*.webp
 ```
-
----
-
-## Documenti Chiave
-
-### AS-IS (Stato Attuale)
-- **00-overview.md**: Panoramica generale del sistema attuale
-- **01-sistemi-e-ambienti.md**: Infrastruttura (Hetzner, Vercel, Neon, Heroku)
-- **02-dominio-funzionale.md**: Entità e concetti chiave del dominio
-- **03-modello-dati-e-mapping.md**: Schema database attuale
-- **04-architettura-tecnica.md**: Backend tRPC e Frontend React
-- **05-integrazioni-esterne.md**: Sistemi esterni e integrazioni
-- **06-roadmap.md**: Piano di modernizzazione
-
-### TO-BE (Progetto Finale)
-- **MASTER-SYSTEM-DESIGN.md**: Architettura finale del sistema con decisioni tecniche non negoziabili
-- **03-modello-dati-e-mapping.md**: Schema Postgres target e mapping da sistemi legacy
-- **06-roadmap-tecnica.md**: Checklist implementativa con step concreti
-
-### References
-- **ANALISI_DMS_LEGACY_COMPLETA.md**: Analisi funzionale dettagliata del gestionale DMS su Heroku
-- **SYSTEM_BLUEPRINT_AS_IS.md**: Documento completo dello stato AS-IS
-- **Screenshot**: Immagini delle schermate del sistema legacy
 
 ---
 
@@ -66,7 +51,32 @@ dms-system-blueprint/
 3. **Frontend** (Next.js su Vercel): Solo UI, parla SOLO con DMS Core API, niente accesso diretto a DB
 4. **DMS Legacy** (Heroku): Sistema esterno da integrare, non più il centro del mondo
 5. **App DMS Ambulanti**: Nel TO-BE parla con Core API, non con il gestionale legacy
-6. **GIS/Mappe**: Layer sopra i dati, agganciato a ID stabili nel DB
+6. **Pepe GIS**: Motore per la creazione e visualizzazione delle mappe dei mercati
+
+---
+
+## Roadmap (Sintesi)
+
+- **Fase 0**: Base tecnica pulita (standardizzazione PostgreSQL, pulizia configurazioni)
+- **Fase 1**: Integrazione Pepe GIS come primo caso d'uso forte (PRIORITÀ)
+- **Fase 2**: Copia e allineamento del gestionale DMS (Heroku)
+- **Fase 3**: Nuovo gestionale dentro la Dashboard / MIO-HUB
+- **Fase 4**: Feature avanzate (CO₂, wallet, automazioni)
+
+*Per i dettagli completi, vedere il [MASTER_SYSTEM_PLAN_DMS_MIO-HUB.md](MASTER_SYSTEM_PLAN_DMS_MIO-HUB.md).*
+
+---
+
+## Sistemi Coinvolti
+
+| Sistema | Hosting | Ruolo | Stato |
+|---------|---------|-------|-------|
+| **DMS Core API** | Hetzner | Backend principale, business logic | TO-BE |
+| **Dashboard / MIO-HUB** | Vercel | Interfaccia web amministrativa | TO-BE |
+| **DMS Legacy** | Heroku | Gestionale esistente | AS-IS (da integrare) |
+| **App Mobile DMS** | - | App per ambulanti | AS-IS (da migrare) |
+| **Database** | Hetzner/Neon | PostgreSQL unico | TO-BE |
+| **Pepe GIS** | - | Motore mappe mercati | TO-BE |
 
 ---
 
@@ -78,25 +88,13 @@ Questo repository è il **manuale di bordo del sistema**. Deve essere aggiornato
 - Si modifica architettura e codice
 
 **Regola d'oro**: Se cambi una decisione tecnica importante:
-1. Aggiorna prima il `MASTER-SYSTEM-DESIGN.md`
+1. Aggiorna prima il `MASTER_SYSTEM_PLAN_DMS_MIO-HUB.md`
 2. Poi adegua il codice
-
----
-
-## Sistemi Coinvolti
-
-| Sistema | Hosting | Ruolo | Stato |
-|---------|---------|-------|-------|
-| **DMS Core API** | Hetzner | Backend principale, business logic | TO-BE |
-| **DMS-HUB Frontend** | Vercel | Interfaccia web amministrativa | TO-BE |
-| **DMS Legacy** | Heroku | Gestionale esistente | AS-IS (da integrare) |
-| **App Mobile DMS** | - | App per ambulanti | AS-IS (da migrare) |
-| **Database** | Neon/Hetzner | PostgreSQL unico | TO-BE |
 
 ---
 
 ## Contatti e Manutenzione
 
-Questo repository è mantenuto come documentazione vivente del progetto DMS.
+Questo repository è mantenuto come documentazione vivente del progetto DMS / MIO-HUB.
 
-Per domande o chiarimenti, fare riferimento ai documenti nella directory `docs/TO-BE/`.
+Per domande o chiarimenti, fare riferimento al documento principale.
