@@ -17,9 +17,15 @@ Il cuore del sistema, l'orchestratore MIO-Hub, risiede su un server cloud Hetzne
 
 #### Servizi in Esecuzione
 
-- **Backend MIO-Hub**: Applicazione Node.js in ascolto su porta `3000`.
+- **DMS Core API**: Applicazione Node.js/TypeScript in esecuzione tramite Docker container `mihub-api`.
+  - **Repository**: `Chcndr/mihub` (monorepo)
+  - **App**: `apps/api`
+  - **Path sul server**: `/opt/mihub/apps/api`
+  - **Comando**: `node dist/server.js`
+  - **Porta interna**: `3000`
 - **Nginx**: Reverse proxy che mappa il dominio `orchestratore.mio-hub.me` alla porta `3000`, gestendo anche il traffico HTTPS.
 - **Certbot**: Tool per la gestione e il rinnovo automatico dei certificati SSL Let's Encrypt.
+- **Backend REST Legacy**: Applicazione Node.js in `/root/mihub-backend-rest` (processo separato, da valutare se dismettere).
 
 #### Configurazione Nginx
 
