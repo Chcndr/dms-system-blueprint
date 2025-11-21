@@ -3,7 +3,30 @@
 **Autore:** Manus AI  
 **Data:** 21 Novembre 2025  
 **Stato:** Ufficiale  
-**Obiettivo:** Fornire un piano di implementazione pratico e dettagliato per migrare dal sistema AS-IS all'architettura TO-BE definita nel `MASTER-SYSTEM-DESIGN.md`.
+**Obiettivo:** Fornire un piano di implementazione pratico e dettagliato per migrare dal sistema AS-IS all'architettura TO-BE, con priorità all'integrazione GIS.
+
+---
+
+## Fase 0: "Vertical Slice" GIS FIRST
+
+**Obiettivo:** Realizzare una prima fetta verticale funzionante che integri la pianta del mercato (Mappa GIS) nella Dashboard, collegandola a un modello dati minimo.
+
+| Task | Impatto | Dipendenze | Stato |
+|---|---|---|---|
+| **0.1: Definire Modello Dati Minimo** | Alto | Nessuna | [ ] |
+| - Creare tabelle `markets`, `stalls`, `vendors` in PostgreSQL. | | | |
+| - La tabella `stalls` deve includere `market_id`, `stall_number` e `gis_feature_id`. | | | |
+| **0.2: Sviluppare Importer per Pianta Mercato** | Alto | Task 0.1 | [ ] |
+| - Analizzare il formato di output dell'editor v3 (GeoJSON/SHP). | | | |
+| - Creare un importer nel backend (Hetzner) per leggere il file e popolare le tabelle `markets` e `stalls`. | | | |
+| **0.3: Sviluppare API Core per GIS** | Alto | Task 0.2 | [ ] |
+| - Esporre endpoint: `GET /markets`, `GET /markets/:id/map`, `GET /markets/:id/stalls`, `GET /stalls/:id`. | | | |
+| **0.4: Sviluppare Vista Mappa in Dashboard** | Alto | Task 0.3 | [ ] |
+| - Creare la pagina "Mappa GIS" nella Dashboard DMS-HUB. | | | |
+| - Implementare selettore mercato e visualizzazione mappa con layer piazzole. | | | |
+| - Al click su una piazzola, mostrare un pannello con dati mercato, posteggio e ambulante (anche fittizi). | | | |
+| **0.5: Creare Stub Sezione "Gestionale"** | Medio | Task 0.4 | [ ] |
+| - Nel pannello laterale, creare uno stub per la sezione "Gestionale" collegata a mercato, posteggio e ambulante. | | | |
 
 ---
 
@@ -14,14 +37,8 @@
 | Task | Impatto | Dipendenze | Stato |
 |---|---|---|---|
 | **1.1: Rimuovere `DATABASE_URL` da Frontend** | Basso | Nessuna | [ ] |
-| - Rimuovere la variabile da `.env.production` e `.env.example` nel repo `dms-hub-app-new`. | | | |
-| - Verificare e rimuovere la variabile dalle configurazioni di Vercel. | | | |
 | **1.2: Validare Configurazione Drizzle** | Medio | Task 1.1 | [ ] |
-| - Assicurarsi che Drizzle nel Core API sia configurato per usare solo PostgreSQL. | | | |
-| - Verificare che non ci siano residui di configurazioni MySQL. | | | |
 | **1.3: Applicare Migrazioni Iniziali** | Alto | Task 1.2 | [ ] |
-| - Generare le migrazioni Drizzle dallo schema definito in `03-modello-dati-e-mapping.md`. | | | |
-| - Applicare le migrazioni al DB PostgreSQL per creare la struttura delle tabelle. | | | |
 
 ---
 
@@ -32,13 +49,9 @@
 | Task | Impatto | Dipendenze | Stato |
 |---|---|---|---|
 | **2.1: Ottenere Accesso a DB Heroku** | Critico | **Decisione Utente** | [ ] |
-| - Ottenere credenziali di accesso in sola lettura al DB PostgreSQL di Heroku. | | | |
 | **2.2: Finalizzare Mapping Dati** | Alto | Task 2.1 | [ ] |
-| - Analizzare lo schema reale di Heroku e aggiornare `03-modello-dati-e-mapping.md` con mapping campo-per-campo. | | | |
 | **2.3: Sviluppare Script ETL** | Alto | Task 2.2 | [ ] |
-| - Creare uno script per estrarre, trasformare e caricare i dati da Heroku al nuovo DB. | | | |
 | **2.4: Eseguire Migrazione di Test** | Medio | Task 2.3 | [ ] |
-| - Eseguire lo script ETL su un ambiente di staging per validare la correttezza dei dati. | | | |
 
 ---
 
@@ -49,13 +62,9 @@
 | Task | Impatto | Dipendenze | Stato |
 |---|---|---|---|
 | **3.1: Identificare Repo Backend** | Critico | **Decisione Utente** | [ ] |
-| - Identificare il repository GitHub del backend tRPC (`orchestratore.mio-hub.me`). | | | |
 | **3.2: Implementare Endpoint CRUD** | Alto | Fase 1, Task 3.1 | [ ] |
-| - Sviluppare endpoint per `markets`, `stalls`, `vendors`, `concessions`, `attendances`. | | | |
 | **3.3: Implementare Logica di Business** | Alto | Task 3.2 | [ ] |
-| - Implementare la logica per la creazione di concessioni, gestione presenze e spuntisti. | | | |
 | **3.4: Refactoring Frontend** | Alto | Task 3.3 | [ ] |
-| - Assicurarsi che il frontend `dms-hub-app-new` utilizzi i nuovi endpoint del Core API per tutte le operazioni. | | | |
 
 ---
 
@@ -66,11 +75,8 @@
 | Task | Impatto | Dipendenze | Stato |
 |---|---|---|---|
 | **4.1: Definire Strategia di Sincronizzazione** | Alto | Fase 2, Fase 3 | [ ] |
-| - Decidere se la sincronizzazione sarà unidirezionale (Heroku → Nuovo DB) o bidirezionale. | | | |
 | **4.2: Sviluppare Job di Sincronizzazione** | Alto | Task 4.1 | [ ] |
-| - Creare un job schedulato (es. cron job) che esegua lo script ETL per mantenere i dati allineati. | | | |
 | **4.3: Mettere Heroku in Read-Only** | Medio | Go-Live | [ ] |
-| - Al momento del go-live definitivo, configurare il sistema Heroku in modalità di sola lettura. | | | |
 
 ---
 
@@ -80,12 +86,6 @@
 
 | Task | Impatto | Dipendenze | Stato |
 |---|---|---|---|
-| **5.1: Integrazione GIS** | Alto | Fase 3 | [ ] |
-| - Progettare e implementare la visualizzazione delle mappe dei mercati nel frontend. | | | |
-| - Sviluppare endpoint nel Core API per fornire dati geospaziali. | | | |
+| **5.1: Integrazione GIS (Completa)** | Alto | Fase 0, Fase 3 | [ ] |
 | **5.2: Integrazione CO₂** | Medio | Fase 3 | [ ] |
-| - Definire come calcolare e tracciare le emissioni di CO₂. | | | |
-| - Aggiungere i campi necessari al modello dati e implementare la logica nel Core API. | | | |
 | **5.3: Integrazione Wallet** | Alto | Fase 3 | [ ] |
-| - Progettare il sistema di gestione dei crediti/pagamenti. | | | |
-| - Implementare le tabelle `wallets`, `transactions` e la logica di gestione nel Core API. | | | |
