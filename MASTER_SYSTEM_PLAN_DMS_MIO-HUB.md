@@ -2,6 +2,7 @@
 
 **Autore:** Manus AI  
 **Data:** 21 Novembre 2025  
+**Ultimo Aggiornamento:** 21 Novembre 2025 - 19:30 GMT+1  
 **Stato:** Ufficiale  
 **Obiettivo:** Questo documento è la **fonte di verità unica e ufficiale** per l'intero sistema DMS / MIO-HUB. Unifica visione, architettura, modello dati e piano di implementazione in un unico punto di riferimento per tutti gli stakeholder (umani e AI).
 
@@ -44,6 +45,8 @@ Lo schema logico del sistema TO-BE è il seguente:
 
 - **Frontend (Dashboard / MIO-HUB)**: Applicazione Next.js su Vercel che funge da interfaccia utente. **Non ha accesso diretto al database** e comunica esclusivamente con il Core API.
 - **Core API su Hetzner**: Servizio Node.js/tRPC che espone tutta la business logic e funge da unico punto di accesso al database. È il **master dei dati e delle logiche**.
+  - **AS-IS (Temporaneo)**: Backend REST (`/root/mihub-backend-rest/`) attivo su Hetzner porta 3001, esposto tramite Nginx su `orchestratore.mio-hub.me`. Usato come adapter temporaneo per implementare endpoint GIS.
+  - **TO-BE (Target)**: Monorepo `mihub` con TypeScript + tRPC + Drizzle, da ripristinare dopo fix errori compilazione.
 - **DB Postgres**: Unico database standard per tutto il sistema, ospitato su Hetzner/Neon.
 - **DMS Legacy (Heroku)**: Sistema esterno trattato come fonte dati da cui migrare e con cui sincronizzarsi durante la transizione.
 - **Pepe GIS**: Motore per la generazione delle piante dei mercati, i cui output (es. GeoJSON) vengono importati e gestiti dal Core API.
@@ -67,7 +70,7 @@ Il modello dati su PostgreSQL è il cuore del sistema. Le tabelle principali inc
 
 - **DMS Legacy (Heroku)**: Integrazione in sola lettura per la migrazione dei dati e la sincronizzazione durante la fase di transizione.
 - **App DMS Ambulanti**: Si connetterà direttamente al Core API per leggere dati (es. concessioni) e scrivere dati (es. presenze).
-- **Pepe GIS / Editor v3**: L'output dell'editor (piante dei mercati in formato GeoJSON/SHP) verrà importato dal Core API per popolare i dati geospaziali delle piazzole.
+- **Pepe GIS / Editor v3**: ✅ **IMPLEMENTATO** - L'output dell'editor (piante dei mercati in formato GeoJSON) viene servito tramite endpoint REST `/api/gis/market-map`. Visualizzazione mappa interattiva disponibile su `/market-gis`.
 
 ---
 
@@ -82,15 +85,26 @@ Il modello dati su PostgreSQL è il cuore del sistema. Le tabelle principali inc
 - [ ] Eliminare accessi diretti a PlanetScale / MySQL dal frontend (Vercel).
 - [ ] Verificare che la Dashboard parli solo con il Core API.
 
-### Fase 1 – Integrazione Pepe GIS come Primo Caso d’Uso Forte
+### Fase 1 – Integrazione Pepe GIS come Primo Caso d'Uso Forte
 
 **Obiettivo:** Avere nella Dashboard una mappa GIS funzionante che carica la pianta del mercato e mostra i dati principali.
 
-- [ ] Definire ID standard condivisi tra Postgres, Pepe GIS e DMS Legacy.
-- [ ] Sviluppare endpoint nel Core API per CRUD di mercati, piazzole, ambulanti e per agganciare le geometrie GIS.
-- [ ] Sviluppare un importer nel backend per leggere i file dall'editor v3.
-- [ ] Implementare il componente mappa nella Dashboard con pannelli laterali interattivi.
-- [ ] Creare uno stub per la sezione "Gestionale" collegata ai dati della mappa.
+**Stato:** ✅ **IMPLEMENTATO IN PRODUZIONE** (Backend REST temporaneo)
+
+- [x] **Endpoint Backend**: `GET /api/gis/market-map` - ✅ **PRODUZIONE** - https://orchestratore.mio-hub.me/api/gis/market-map
+- [x] **Pagina Mappa**: `/market-gis` - Visualizzazione interattiva con Leaflet (Branch: `feature/gis-market-map-v1`)
+- [x] **Componenti**: Contorno mercato (Polygon) + Piazzole (Circle) + Popup dettagli
+- [ ] Definire ID standard condivisi tra Postgres, Pepe GIS e DMS Legacy
+- [ ] Sviluppare endpoint CRUD completo per mercati, piazzole, ambulanti
+- [ ] Sviluppare importer per scrittura dati Editor v3 nel database
+- [ ] Implementare pannelli laterali interattivi nella mappa
+- [ ] Creare sezione "Gestionale" collegata ai dati della mappa
+
+**Dettagli Implementazione:**
+- **Backend**: Router Express `gisRouter.ts` con validazione formato Editor v3
+- **Frontend**: Componente React `MarketGISPage.tsx` con react-leaflet
+- **Dati**: File JSON di esempio con 3 piazzole (pronto per 160 piazzole Grosseto)
+- **Test**: ✅ Build OK, endpoint funzionante, visualizzazione corretta
 
 ### Fase 2 – Copia e Allineamento del Gestionale DMS (Heroku)
 
