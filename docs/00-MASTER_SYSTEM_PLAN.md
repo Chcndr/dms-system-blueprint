@@ -18,14 +18,33 @@ L'ecosistema attuale è frammentato su più sistemi:
 - **Database (PlanetScale/MySQL):** Residui di una precedente architettura, da dismettere.
 - **Dashboard (Vercel):** Frontend di nuova generazione che deve diventare il punto di accesso unico.
 
-### 1.2. Architettura Futura (TO-BE)
+### 1.2. Architettura Attuale (AS-IS Aggiornato - 21 Nov 2025)
 
-L'obiettivo è consolidare tutto in un'architettura API-first, con un unico database e un frontend disaccoppiato:
+✅ **BACKEND UFFICIALE IN PRODUZIONE:** `mihub-backend-rest`
 
-- **DMS Core API (Hetzner):** Unico backend che espone tutte le funzionalità.
-- **Database (PostgreSQL su Neon):** Unica fonte di verità per tutti i dati.
-- **Dashboard (Vercel):** Unico punto di accesso per tutte le operazioni.
-- **DMS Legacy (Heroku):** Fonte dati da migrare e poi dismettere.
+- **DMS Core API (Hetzner):** ✅ Attivo su `orchestratore.mio-hub.me`
+  - Path: `/root/mihub-backend-rest/`
+  - Tecnologia: Node.js 22.13.0 + Express
+  - PM2 Process: `mihub-backend` (porta 3001)
+  - Endpoint GIS: ✅ Funzionante
+- **Database (PostgreSQL su Neon):** ✅ Unica fonte di verità
+  - Host: `ep-bold-silence-adftsojg-pooler.c-2.us-east-1.aws.neon.tech`
+  - Database: `neondb`
+  - MySQL/PlanetScale: ✅ Completamente rimosso
+- **Dashboard (Vercel):** ✅ Frontend Next.js
+  - Repository: `Chcndr/dms-hub-app-new`
+  - Branch GIS: `feature/gis-market-map-v1` ✅ Merged in master
+  - Accesso DB: ✅ Solo via Core API (nessun accesso diretto)
+- **DMS Legacy (Heroku):** Fonte dati da migrare
+
+### 1.3. Architettura Futura (TO-BE)
+
+Migrazione a monorepo TypeScript + tRPC (non urgente, backend attuale funzionante):
+
+- **DMS Core API:** Monorepo `Chcndr/mihub` (TypeScript + tRPC + Drizzle)
+- **Database:** Stesso PostgreSQL (Neon)
+- **Dashboard:** Stesso frontend (Vercel)
+- **Timeline:** Da definire (richiede fix build TypeScript)
 
 ---
 
