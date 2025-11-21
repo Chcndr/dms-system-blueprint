@@ -45,8 +45,15 @@ Lo schema logico del sistema TO-BE è il seguente:
 
 - **Frontend (Dashboard / MIO-HUB)**: Applicazione Next.js su Vercel che funge da interfaccia utente. **Non ha accesso diretto al database** e comunica esclusivamente con il Core API.
 - **Core API su Hetzner**: Servizio Node.js/tRPC che espone tutta la business logic e funge da unico punto di accesso al database. È il **master dei dati e delle logiche**.
-  - **AS-IS (Temporaneo)**: Backend REST (`/root/mihub-backend-rest/`) attivo su Hetzner porta 3001, esposto tramite Nginx su `orchestratore.mio-hub.me`. Usato come adapter temporaneo per implementare endpoint GIS.
-  - **TO-BE (Target)**: Monorepo `mihub` con TypeScript + tRPC + Drizzle, da ripristinare dopo fix errori compilazione.
+  - **AS-IS (Backend Ufficiale Attuale)**: 
+    - **Path:** `/root/mihub-backend-rest/` (Server Hetzner 157.90.29.66)
+    - **Repository:** Codice locale, non versionato su Git
+    - **Tecnologia:** Node.js + Express + PM2
+    - **Porta:** 3001
+    - **Dominio:** `orchestratore.mio-hub.me` (Nginx reverse proxy)
+    - **Database:** PostgreSQL (Neon)
+    - **Endpoint GIS:** `GET /api/gis/market-map` ✅ Produzione
+  - **TO-BE (Target Futuro)**: Monorepo `Chcndr/mihub` con TypeScript + tRPC + Drizzle. Attualmente non deployato a causa di errori compilazione TypeScript. Migrazione pianificata dopo fix build.
 - **DB Postgres**: Unico database standard per tutto il sistema, ospitato su Hetzner/Neon.
 - **DMS Legacy (Heroku)**: Sistema esterno trattato come fonte dati da cui migrare e con cui sincronizzarsi durante la transizione.
 - **Pepe GIS**: Motore per la generazione delle piante dei mercati, i cui output (es. GeoJSON) vengono importati e gestiti dal Core API.

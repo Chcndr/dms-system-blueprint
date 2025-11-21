@@ -10,7 +10,9 @@
 
 ### Backend in Produzione
 
-**Repository:** `/root/mihub-backend-rest/` (Server Hetzner)
+**Path Server:** `/root/mihub-backend-rest/` (Server Hetzner)
+**Repository GitHub:** Nessuno (codice locale sul server)
+**Commit/Tag:** N/A (backend standalone, non versionato su Git)
 
 **Caratteristiche:**
 - **Tecnologia:** Node.js + Express
@@ -32,10 +34,14 @@
 | `/api/gis/market-map` | GET | Dati mappa mercato (Editor v3) | ✅ Produzione |
 
 **Modulo GIS:**
-- File: `/root/mihub-backend-rest/routes/gis.js`
-- Dati: `/root/mihub-backend-rest/data/editor-v3-sample.json`
-- Formato output: GeoJSON compatibile con Leaflet
-- URL Produzione: https://orchestratore.mio-hub.me/api/gis/market-map
+- **File Router:** `/root/mihub-backend-rest/routes/gis.js` (111 righe)
+- **File Dati:** `/root/mihub-backend-rest/data/editor-v3-sample.json` (3 piazzole esempio)
+- **Formato Input:** JSON Editor v3 (container, center, stalls_geojson, markers_geojson, areas_geojson)
+- **Formato Output:** GeoJSON compatibile con Leaflet
+- **URL Produzione:** https://orchestratore.mio-hub.me/api/gis/market-map
+- **Metodo:** GET
+- **Autenticazione:** Nessuna (endpoint pubblico)
+- **CORS:** Configurato per domini Vercel
 
 **Esempio Risposta `/api/gis/market-map`:**
 
