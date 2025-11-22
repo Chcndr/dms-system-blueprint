@@ -24,6 +24,7 @@ La documentazione è organizzata in directory tematiche per facilitare la consul
 - **[Database Schema](04_database/schema.md)**: Descrizione dettagliata di tutte le 39 tabelle del database Drizzle/Postgres.
 - **[API Documentation](02_backend/)**: Raccolta di tutte le documentazioni delle API tRPC.
 - **[Architettura Centro Mobilità](06_mobilita/architettura-centro-mobilita.md)**: Design scalabile per l'integrazione dei trasporti pubblici.
+- **[Standard Mappe GIS](05_gis/standard-mappe-gis.md)**: Componenti ufficiali e deprecati per le mappe GIS.
 
 ---
 
