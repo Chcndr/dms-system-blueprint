@@ -21,11 +21,11 @@ La documentazione è organizzata in directory tematiche per facilitare la consul
 ### Documenti Principali
 
 - **[MASTER_SYSTEM_PLAN.md](01_architettura/MASTER_SYSTEM_PLAN.md)**: Il documento principale che descrive la visione, gli obiettivi e la roadmap completa del sistema.
-- **[Database Schema](04_database/schema.md)**: Descrizione dettagliata di tutte le 39 tabelle del database Drizzle/Postgres.
+- **Database Schema**: Schema completo del database con 39 tabelle (Drizzle/Postgres) - Documentato nel codice `drizzle/schema.ts`
 - **[API Documentation](02_backend/)**: Raccolta di tutte le documentazioni delle API tRPC.
 - **[Architettura Centro Mobilità](06_mobilita/architettura-centro-mobilita.md)**: Design scalabile per l'integrazione dei trasporti pubblici.
-- [Standard Mappe GIS](./05_gis/standard-mappe-gis.md)
-- [Gestione Mercati e Mappa GIS](./05_gis/gestione-mercati-e-mappa.md)**: Componenti ufficiali e deprecati per le mappe GIS.
+- **[Standard Mappe GIS](05_gis/standard-mappe-gis.md)**: Componenti ufficiali e deprecati per le mappe GIS.
+- **[Gestione Mercati e Mappa GIS](05_gis/gestione-mercati-e-mappa.md)**: Sincronizzazione tabella, mappa, popup e vetrina.
 
 ---
 
