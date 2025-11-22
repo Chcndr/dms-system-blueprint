@@ -17,7 +17,44 @@ L'architettura del Centro Mobilità è progettata per essere **scalabile, flessi
 
 ---
 
-## 2. Architettura Ufficiale
+## 2. Architettura Ufficiale (AS-IS)
+
+Questa documentazione riflette lo stato **reale in produzione**.
+
+L'architettura del Centro Mobilità segue lo stesso approccio standard definito per le mappe GIS, con una chiara separazione tra backend, frontend e provider di dati.
+
+### 2.1 Componente Frontend: `MobilityMap`
+
+- **Componente:** `MobilityMap`
+- **Libreria:** Google Maps
+- **Scopo:** Visualizzazione di dati di trasporto pubblico (bus, tram, parcheggi).
+- **Dati:** Riceve dati come props:
+  - `stops`: Array di fermate/parcheggi
+- **Endpoint tRPC (chiamato dalla Dashboard PA):**
+  - `mobility.list`
+
+### 2.2 Backend: Architettura a Provider
+
+Il backend è basato su un'architettura a provider scalabile, che permette di integrare diverse fonti di dati per mercati diversi.
+
+- **Router Principale:** `mobilityRouter.ts`
+- **Provider Esempio:** `tperProvider.ts` (per Bologna)
+- **API Disponibili:**
+  - `list`: Lista dati mobilità (con filtri per marketId e type)
+  - `getById`: Dettaglio singolo elemento
+  - `create`: Crea nuova fermata/parcheggio
+  - `update`: Aggiorna dati esistenti
+  - `delete`: Elimina elemento
+  - `syncFromProvider`: Sincronizza dati da provider esterno
+
+### 2.3 Fonte di Verità
+
+- **Una sola fonte di verità:** Tutti i dati di mobilità sono gestiti tramite il `mobilityRouter` e salvati nella tabella `mobility_data` del database.
+- **Niente doppioni:** Non ci sono altri componenti o fonti di dati per la mobilità.
+
+---
+
+
 
 L'architettura del Centro Mobilità segue lo stesso approccio standard definito per le mappe GIS, con una chiara separazione tra backend, frontend e provider di dati.
 
