@@ -113,7 +113,20 @@ Il `mobilityRouter` espone le seguenti API:
 
 ---
 
-## 6. Vantaggi di questa Architettura
+## 6. Collegamento con Hub Management e Dashboard PA
+
+L'architettura del Centro Mobilità è strettamente integrata con il sistema di **Hub Management** e la **Dashboard PA**.
+
+- **Hub Management**: Il `marketId` nella tabella `mobility_data` collega i dati di mobilità a uno specifico HUB. Questo permette di visualizzare i dati di trasporto pubblico pertinenti per ogni HUB di prossimità.
+- **Dashboard PA**: Il componente `MobilityManagement` nella Dashboard PA permette agli operatori del comune di:
+  - Visualizzare le statistiche di mobilità in tempo reale.
+  - Sincronizzare manualmente i dati dai provider esterni.
+  - Controllare lo stato delle integrazioni TPL.
+- **Mappa Interattiva**: Il componente `MobilityMap` visualizza i dati sulla mappa, fornendo una visione geospaziale completa dei trasporti pubblici intorno agli HUB.
+
+---
+
+## 7. Vantaggi di questa Architettura
 
 - **Scalabilità**: Aggiungere un nuovo provider (es. ATM Milano) richiede solo di creare un nuovo file `atmProvider.ts` e registrarlo nel `providerRegistry`.
 - **Manutenibilità**: La logica di ogni provider è isolata, rendendo più semplice la gestione di modifiche alle API esterne.
