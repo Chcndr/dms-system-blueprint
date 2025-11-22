@@ -12,7 +12,7 @@ Questo repository è la **fonte di verità ufficiale** per:
 
 ## 📘 Documenti Ufficiali
 
-### 1. **[MASTER SYSTEM PLAN - DMS / MIO-HUB](docs/00-MASTER_SYSTEM_PLAN.md)**
+### 1. **[MASTER SYSTEM PLAN](docs/MASTER_SYSTEM_PLAN.md)**
 
 Questo è il **documento principale** che unifica visione, architettura, piano di migrazione e integrazione Pepe GIS.
 
