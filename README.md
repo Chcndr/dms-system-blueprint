@@ -23,6 +23,7 @@ La documentazione è organizzata in directory tematiche per facilitare la consul
 - **[MASTER_SYSTEM_PLAN.md](01_architettura/MASTER_SYSTEM_PLAN.md)**: Il documento principale che descrive la visione, gli obiettivi e la roadmap completa del sistema.
 - **[Database Schema](04_database/schema.md)**: Descrizione dettagliata di tutte le 39 tabelle del database Drizzle/Postgres.
 - **[API Documentation](02_backend/)**: Raccolta di tutte le documentazioni delle API tRPC.
+- **[Architettura Centro Mobilità](06_mobilita/architettura-centro-mobilita.md)**: Design scalabile per l'integrazione dei trasporti pubblici.
 
 ---
 
