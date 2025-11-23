@@ -449,3 +449,93 @@ Il sistema è **pronto per il deploy frontend**. Tutti i componenti sono funzion
 
 **Report completato:** 21 Novembre 2025 - 20:30 GMT+1  
 **Stato:** ✅ Tutti gli obiettivi raggiunti
+
+
+---
+
+## 🏗️ AGGIORNAMENTO CENTRO MOBILITÀ (23 Novembre 2025)
+
+### Riepilogo Intervento
+
+L'intervento si è reso necessario per risolvere un errore di sincronizzazione dei dati TPER nel Centro Mobilità e un problema di visualizzazione della mappa.
+
+### Problemi Risolti
+
+1.  **Errore di Sincronizzazione TPER (Runtime):**
+    *   **Causa:** La query SQL raw per l'inserimento dei dati TPER nel database trattava i campi `lat` e `lng` come stringhe (con apici singoli), causando un errore di tipo nel database.
+    *   **Soluzione:** Rimosso gli apici singoli dalla query, permettendo al database di interpretare correttamente i valori come numerici.
+
+2.  **Errore Mappa (Chiave API Google Maps Mancante):**
+    *   **Causa:** Il componente `MobilityMap` utilizzava Google Maps, che richiede una chiave API a pagamento. La chiave non era configurata nell'ambiente Vercel.
+    *   **Soluzione:** Sostituito il componente `MobilityMap` con il componente `GISMap` esistente, che utilizza Leaflet/OpenStreetMap e non richiede chiavi API.
+
+3.  **Errori di Build (TypeScript):**
+    *   **Causa:** Diversi errori di tipizzazione e dipendenze mancanti (`sql` da `drizzle-orm/sql`) impedivano il deploy delle correzioni.
+    *   **Soluzione:** Corretti tutti gli errori di build, permettendo il deploy della versione aggiornata.
+
+### Stato Attuale Centro Mobilità
+
+*   **Sincronizzazione TPER:** ✅ **Funzionante**
+*   **Visualizzazione Dati (Box):** ✅ **Funzionante**
+*   **Mappa Trasporti Pubblici:** ✅ **Funzionante (con Leaflet)**
+
+### Stato Piattaforme (Aggiornato)
+
+| Piattaforma | Ruolo | Stato Attuale | Note |
+| :--- | :--- | :--- | :--- |
+| **Vercel** | Frontend / Serverless Functions | ✅ **Operativo** | Deploy del frontend e delle funzioni serverless (backend tRPC) funzionanti. |
+| **Hetzner** | Database / Backend Principale | ✅ **Operativo** | Ospita il database PostgreSQL e il backend legacy. |
+| **Heroku** | Servizi Legacy / Microservizi | **Sconosciuto** | Non coinvolto nell'intervento. |
+
+
+---
+
+## 🛡️ MODULO GUARDIAN - MONITORAGGIO E LOGGING
+
+**Data:** 23 Novembre 2025
+**Autore:** Manus AI
+**Stato:** Completato
+
+### 1. Obiettivi Raggiunti
+
+1.  ✅ **Inventario API Centralizzato:** Implementato un sistema per catalogare dinamicamente tutti gli endpoint tRPC.
+2.  ✅ **Logging Unificato:** Creato un servizio di logging centralizzato per aggregare i log da tutte le componenti del sistema.
+3.  ✅ **Sezioni Dashboard Potenziate:** Le sezioni **Integrazioni**, **Log** e **Debug** della Dashboard PA sono state collegate al backend MIHUB, sostituendo i dati mock e i file statici.
+4.  ✅ **Debug Facilitato:** Implementato un endpoint proxy per testare le API direttamente dal frontend.
+
+### 2. Lavoro Completato
+
+#### Backend (Monorepo `dms-hub-app-new`)
+
+**File Creati/Modificati:**
+
+| File | Tipo | Descrizione |
+|---|---|---|
+| `server/services/apiInventoryService.ts` | Nuovo | Servizio per l'inventario API. |
+| `server/services/apiLogsService.ts` | Nuovo | Servizio per il logging centralizzato. |
+| `server/guardianRouter.ts` | Nuovo | Router tRPC per gli endpoint Guardian. |
+| `server/routers.ts` | Modificato | Registrazione del `guardianRouter`. |
+
+**Endpoint Guardian Implementati:**
+
+| Endpoint | Metodo | Descrizione |
+|---|---|---|
+| `guardian.integrations` | `GET` | Fornisce l'inventario API completo. |
+| `guardian.logs` | `GET` | Fornisce i log centralizzati con filtri. |
+| `guardian.debug.testEndpoint` | `POST` | Proxy per testare gli endpoint. |
+
+#### Frontend (Monorepo `dms-hub-app-new`)
+
+**File Creati/Modificati:**
+
+| File | Tipo | Descrizione |
+|---|---|---|
+| `client/src/components/GuardianIntegrations.tsx` | Nuovo | Componente per la visualizzazione dell'inventario API. |
+| `client/src/components/GuardianLogsSection.tsx` | Nuovo | Componente per la visualizzazione dei log. |
+| `client/src/components/GuardianDebugSection.tsx` | Nuovo | Componente per il monitoraggio degli errori. |
+| `client/src/pages/DashboardPA.tsx` | Modificato | Sostituzione dei vecchi componenti con quelli nuovi. |
+| `client/src/components/Integrazioni.tsx` | Modificato | Utilizzo di `GuardianIntegrations`. |
+
+### 3. Risultato Finale
+
+Le sezioni **Integrazioni**, **Log** e **Debug** della Dashboard PA sono ora completamente funzionanti e collegate a un backend dinamico. Questo fornisce al team di sviluppo un controllo completo e in tempo reale sullo stato del sistema, facilitando il monitoraggio, il debug e la gestione delle API.

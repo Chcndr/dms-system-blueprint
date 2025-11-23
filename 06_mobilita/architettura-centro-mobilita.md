@@ -25,8 +25,8 @@ L'architettura del Centro Mobilità segue lo stesso approccio standard definito 
 
 ### 2.1 Componente Frontend: `MobilityMap`
 
-- **Componente:** `MobilityMap`
-- **Libreria:** Google Maps
+- **Componente:** `GISMap` (Componente GIS riutilizzato)
+- **Libreria:** Leaflet / OpenStreetMap (Sostituito Google Maps per eliminare la dipendenza da chiavi API)
 - **Scopo:** Visualizzazione di dati di trasporto pubblico (bus, tram, parcheggi).
 - **Dati:** Riceve dati come props:
   - `stops`: Array di fermate/parcheggi
@@ -60,8 +60,8 @@ L'architettura del Centro Mobilità segue lo stesso approccio standard definito 
 
 ### 2.1 Componente Frontend: `MobilityMap`
 
-- **Componente:** `MobilityMap`
-- **Libreria:** Google Maps
+- **Componente:** `GISMap` (Componente GIS riutilizzato)
+- **Libreria:** Leaflet / OpenStreetMap (Sostituito Google Maps per eliminare la dipendenza da chiavi API)
 - **Scopo:** Visualizzazione di dati di trasporto pubblico (bus, tram, parcheggi).
 - **Caratteristiche:**
   - Calcolo percorsi con Google Directions API
@@ -109,7 +109,7 @@ graph TD
 
 | Componente | Descrizione |
 | :--- | :--- |
-| **Frontend (MobilityMap)** | Componente React che visualizza i dati di mobilità su una mappa (Google Maps). Interroga il backend tramite tRPC. |
+| **Frontend (GISMap)** | Componente React che visualizza i dati di mobilità su una mappa (Leaflet/OpenStreetMap). Interroga il backend tramite tRPC. |
 | **Backend (mobilityRouter)** | Router tRPC che espone le API per il Centro Mobilità. Gestisce le richieste, seleziona il provider corretto e interagisce con il database. |
 | **Provider Registry** | Un registro che mappa i nomi dei provider (es. `tper`, `mock`) alle loro implementazioni. |
 | **Mobility Provider** | Un'interfaccia che definisce i metodi che ogni provider deve implementare (`fetchStops`, `fetchLines`). |
@@ -134,10 +134,10 @@ graph TD
 
 ### Visualizzazione Dati (Real-Time)
 
-1. Il componente `MobilityMap` nel frontend chiama l'endpoint `mobility.list` con il `marketId` desiderato.
+1. Il componente `GISMap` nel frontend chiama l'endpoint `mobility.list` con il `marketId` desiderato.
 2. Il `mobilityRouter` esegue una query sulla tabella `mobility_data` per recuperare i dati memorizzati.
 3. I dati vengono restituiti al frontend.
-4. Il `MobilityMap` renderizza i dati sulla mappa, mostrando icone per fermate e parcheggi, e popup con dettagli.
+4. Il `GISMap` renderizza i dati sulla mappa, mostrando icone per fermate e parcheggi, e popup con dettagli.
 
 ### Aggiornamenti Real-Time (Opzionale)
 
@@ -157,8 +157,8 @@ CREATE TABLE mobility_data (
   line_number VARCHAR(20),
   line_name VARCHAR(255),
   stop_name VARCHAR(255),
-  lat VARCHAR(20),
-  lng VARCHAR(20),
+  lat NUMERIC(10, 7), -- Corretto: Rimosso VARCHAR per evitare errori di inserimento SQL (risoluzione bug)
+  lng NUMERIC(10, 7), -- Corretto: Rimosso VARCHAR per evitare errori di inserimento SQL (risoluzione bug)
   status VARCHAR(50) DEFAULT 'active', -- active, delayed, suspended
   occupancy INTEGER, -- 0-100%
   available_spots INTEGER, -- Per parcheggi
@@ -194,7 +194,7 @@ L'architettura del Centro Mobilità è strettamente integrata con il sistema di 
   - Visualizzare le statistiche di mobilità in tempo reale.
   - Sincronizzare manualmente i dati dai provider esterni.
   - Controllare lo stato delle integrazioni TPL.
-- **Mappa Interattiva**: Il componente `MobilityMap` visualizza i dati sulla mappa, fornendo una visione geospaziale completa dei trasporti pubblici intorno agli HUB.
+- **Mappa Interattiva**: Il componente `GISMap` visualizza i dati sulla mappa, fornendo una visione geospaziale completa dei trasporti pubblici intorno agli HUB.
 
 ---
 
