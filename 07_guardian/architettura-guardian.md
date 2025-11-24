@@ -334,3 +334,113 @@ Il modulo Guardian fornisce una soluzione robusta e centralizzata per il monitor
 
 **Ultimo aggiornamento:** 24 Novembre 2025  
 **Versione:** 2.0 (con logging automatico)
+
+
+## 9. Protezione Secrets e API Keys
+
+### 9.1. Problema
+
+Gli agenti LLM (mio, dev, gemini_arch) hanno accesso a tutti gli endpoint API tramite Guardian. Questo rappresenta un rischio di sicurezza per gli endpoint che gestiscono **secrets** (API keys, token, credenziali).
+
+### 9.2. Soluzione: Deny su `/admin/secrets/*`
+
+Tutti gli endpoint del sistema secrets (`/admin/secrets/*`) sono protetti con **permesso `deny`** per tutti gli agenti LLM.
+
+**Configurazione Guardian (`MIO-hub/api/index.json`):**
+
+```json
+{
+  "id": "admin.secrets.save",
+  "name": "Salva Secret Cifrato",
+  "endpoint": "/admin/secrets",
+  "method": "POST",
+  "risk": "critical",
+  "permissions": {
+    "mio": "deny",
+    "dev": "deny",
+    "manus_worker": "deny",
+    "gemini_arch": "deny"
+  }
+},
+{
+  "id": "admin.secrets.list",
+  "name": "Lista Secrets",
+  "endpoint": "/admin/secrets",
+  "method": "GET",
+  "risk": "critical",
+  "permissions": {
+    "mio": "deny",
+    "dev": "deny",
+    "manus_worker": "deny",
+    "gemini_arch": "deny"
+  }
+},
+{
+  "id": "admin.secrets.delete",
+  "name": "Elimina Secret",
+  "endpoint": "/admin/secrets/:name",
+  "method": "DELETE",
+  "risk": "critical",
+  "permissions": {
+    "mio": "deny",
+    "dev": "deny",
+    "manus_worker": "deny",
+    "gemini_arch": "deny"
+  }
+}
+```
+
+### 9.3. Accesso Umano
+
+Solo gli **admin umani** possono accedere agli endpoint `/admin/secrets/*` tramite:
+- Dashboard PA (pagina API Tokens)
+- Chiamate dirette con autenticazione admin
+
+### 9.4. Integrazione Backend
+
+Il backend (`mihub-backend-rest`) recupera automaticamente i secrets dal vault cifrato quando necessario (es. per chiamate LLM), senza esporli agli agenti.
+
+**Esempio:**
+```javascript
+const { getSecret } = require('./modules/secrets');
+
+async function callOpenAI(prompt) {
+  // Recupera API key dal vault cifrato
+  const apiKey = await getSecret('openai_api_key');
+  
+  // Usa la chiave per chiamare OpenAI
+  const response = await openai.chat.completions.create({
+    model: 'gpt-5.1-mini',
+    messages: [{ role: 'user', content: prompt }]
+  });
+  
+  return response;
+}
+```
+
+### 9.5. Audit Trail
+
+Tutte le operazioni sui secrets vengono loggate in `mio_agent_logs` con:
+- Timestamp
+- Operazione (save/list/delete)
+- Utente che ha eseguito l'operazione
+- Risultato (success/failure)
+
+**Esempio log:**
+```json
+{
+  "timestamp": "2025-11-24T12:34:56Z",
+  "agent": "admin_user",
+  "endpoint": "/admin/secrets",
+  "method": "POST",
+  "status_code": 201,
+  "risk": "critical",
+  "success": true,
+  "message": "Secret 'openai_api_key' saved successfully"
+}
+```
+
+---
+
+**Ultimo aggiornamento:** 24 Novembre 2025  
+**Versione:** 2.1 (con protezione secrets)
