@@ -96,7 +96,62 @@ pm2 logs mihub-backend
 pm2 status
 ```
 
-### 2.4. Nginx Proxy
+### 2.4. Deploy Manuale
+
+**Credenziali SSH Hetzner:**
+- **IP:** 157.90.29.66
+- **Hostname:** orchestratore.mio-hub.me
+- **User:** root
+- **SSH Key:** `/home/ubuntu/.ssh/hetzner_server_key` (nel sandbox)
+- **Password backup:** `tkFxkgnT41eh`
+
+**Procedura deploy modifiche:**
+
+```bash
+# 1. Commit e push su GitHub
+cd /path/to/mihub-backend-rest
+git add .
+git commit -m "feat: descrizione modifiche"
+git push origin master
+
+# 2. Opzione A: Deploy via git pull (se token GitHub configurato)
+ssh -i ~/.ssh/hetzner_server_key root@157.90.29.66 \
+  "cd /root/mihub-backend-rest && git pull && pm2 restart mihub-backend"
+
+# 3. Opzione B: Deploy via SCP (se token GitHub scaduto)
+# Copia file modificati
+scp -i ~/.ssh/hetzner_server_key \
+  routes/orchestrator.js \
+  root@157.90.29.66:/root/mihub-backend-rest/routes/
+
+scp -i ~/.ssh/hetzner_server_key \
+  src/modules/orchestrator/llm.js \
+  root@157.90.29.66:/root/mihub-backend-rest/src/modules/orchestrator/
+
+# Restart PM2
+ssh -i ~/.ssh/hetzner_server_key root@157.90.29.66 \
+  "pm2 restart mihub-backend"
+
+# 4. Verifica deploy
+ssh -i ~/.ssh/hetzner_server_key root@157.90.29.66 \
+  "pm2 status && pm2 logs mihub-backend --lines 20"
+```
+
+**Test post-deploy:**
+
+```bash
+# Test health check
+curl https://orchestratore.mio-hub.me/api/health
+
+# Test orchestratore
+curl -X POST https://orchestratore.mio-hub.me/api/mihub/orchestrator \
+  -H "Content-Type: application/json" \
+  -d '{"mode":"auto","message":"test","conversationId":null}'
+```
+
+**NOTA:** Il token GitHub sul server potrebbe essere scaduto. In quel caso usare Opzione B (SCP).
+
+### 2.5. Nginx Proxy
 
 **Dominio:** https://orchestratore.mio-hub.me
 
