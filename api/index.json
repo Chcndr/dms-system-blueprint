@@ -1,0 +1,89 @@
+{
+  "version": "1.0.0",
+  "last_updated": "2025-11-27",
+  "description": "API Index per MIHUB Backend REST - Documentazione endpoint disponibili",
+  "base_url": "https://mihub.157-90-29-66.nip.io",
+  "endpoints": [
+    {
+      "path": "/api/hooks/zapier/new-concession",
+      "method": "POST",
+      "category": "webhooks_zapier",
+      "status": "Implemented",
+      "description": "Webhook interno per notificare a Zapier la creazione/aggiornamento di una concessione",
+      "risk": "medium",
+      "authentication": "API Key (x-zapier-api-key header)",
+      "payload_example": {
+        "market_id": 1,
+        "market_code": "GR001",
+        "market_name": "Mercato Grosseto",
+        "concession_id": 1234,
+        "stall_number": 17,
+        "stall_type": "fisso",
+        "company_code": "V003",
+        "company_name": "Alimentari Verdi",
+        "state": "attiva",
+        "valid_from": "2025-01-01",
+        "valid_to": null,
+        "source": "dms-ui"
+      },
+      "response_example": {
+        "status": "ok",
+        "message": "Webhook received successfully",
+        "event_type": "new-concession",
+        "timestamp": "2025-11-27T10:15:00Z"
+      }
+    },
+    {
+      "path": "/api/hooks/zapier/stall-status-changed",
+      "method": "POST",
+      "category": "webhooks_zapier",
+      "status": "Implemented",
+      "description": "Webhook interno per notificare a Zapier i cambi di stato dei posteggi",
+      "risk": "medium",
+      "authentication": "API Key (x-zapier-api-key header)",
+      "payload_example": {
+        "market_id": 1,
+        "market_code": "GR001",
+        "stall_number": 17,
+        "old_status": "libero",
+        "new_status": "occupato",
+        "status_reason": "spunta",
+        "company_code": "V003",
+        "company_name": "Alimentari Verdi",
+        "changed_at": "2025-11-27T10:15:00Z",
+        "source": "dms-ui"
+      },
+      "response_example": {
+        "status": "ok",
+        "message": "Webhook received successfully",
+        "event_type": "stall-status-changed",
+        "timestamp": "2025-11-27T10:15:00Z"
+      }
+    },
+    {
+      "path": "/api/hooks/zapier/test",
+      "method": "GET",
+      "category": "webhooks_zapier",
+      "status": "Implemented",
+      "description": "Endpoint di test per verificare che il webhook sia raggiungibile",
+      "risk": "low",
+      "authentication": "None",
+      "response_example": {
+        "status": "ok",
+        "message": "Zapier webhook endpoint is reachable",
+        "timestamp": "2025-11-27T10:15:00Z",
+        "endpoints": [
+          "POST /api/hooks/zapier/new-concession",
+          "POST /api/hooks/zapier/stall-status-changed"
+        ]
+      }
+    }
+  ],
+  "categories": {
+    "webhooks_zapier": {
+      "name": "Webhooks Zapier",
+      "description": "Endpoint webhook per integrazione con Zapier",
+      "security": "API Key condiviso configurato in ZAPIER_WEBHOOK_SECRET"
+    }
+  }
+}
