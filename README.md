@@ -53,3 +53,5 @@ Per proporre modifiche, creare una Pull Request. Ogni modifica deve essere appro
 - **[Fix: Gestione Errori Gemini API](./07_guide_operative/FIX_GEMINI_ERROR_HANDLING.md)**: Come è stato risolto il bug di crash dell'agente MIO.
 
 - **[Abacus → GitHub via MIHUB](./07_guide_operative/ABACUS_GITHUB_VIA_MIHUB.md)**: Come Abacus accede a GitHub tramite il proxy MIHUB.
+
+- **[Deploy: GitHub Proxy per Abacus](./07_guide_operative/DEPLOY_MIHUB_ABACUS_GITHUB_PROXY.md)**: Guida completa al deploy e test del proxy GitHub.
