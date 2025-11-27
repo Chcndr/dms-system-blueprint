@@ -47,3 +47,5 @@ Per proporre modifiche, creare una Pull Request. Ogni modifica deve essere appro
 ---
 
 *Questo repository è la fonte unica di verità per la documentazione del sistema DMS Hub.*
+
+- **[MIO: Permessi e Flusso di Lavoro](./07_guide_operative/MIO_PERMESSI_E_FLUSSO_DI_LAVORO.md)**: Come l'agente AI MIO interagisce con il sistema.
