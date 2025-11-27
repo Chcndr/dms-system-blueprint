@@ -29,6 +29,17 @@ La documentazione è organizzata in directory tematiche per facilitare la consul
 
 ---
 
+## 🚀 Playbook di Deploy e Guide Operative
+
+Per tutte le procedure di deploy, troubleshooting e gestione del sistema, fare riferimento alle seguenti guide:
+
+- **[Playbook Ufficiale di Deploy](./07_guide_operative/PLAYBOOK_DEPLOY.md)**: La guida completa e ufficiale per il deploy di frontend, backend e database.
+- **[Procedura Deploy Backend (Hetzner)](07_guide_operative/DEPLOY_BACKEND_HETZNER.md)**
+- **[Procedura Deploy Frontend (Vercel)](07_guide_operative/DEPLOY_FRONTEND_VERCEL.md)**
+- **[Troubleshooting: "Endpoint not available"](07_guide_operative/TROUBLESHOOTING_ENDPOINT_NOT_AVAILABLE.md)**
+
+---
+
 ## Come Contribuire
 
 Per proporre modifiche, creare una Pull Request. Ogni modifica deve essere approvata prima del merge su `main`.
@@ -36,10 +47,3 @@ Per proporre modifiche, creare una Pull Request. Ogni modifica deve essere appro
 ---
 
 *Questo repository è la fonte unica di verità per la documentazione del sistema DMS Hub.*
-
-
-### Guide Operative Aggiuntive
-
-- **[Procedura Deploy Backend (Hetzner)](07_guide_operative/DEPLOY_BACKEND_HETZNER.md)**
-- **[Procedura Deploy Frontend (Vercel)](07_guide_operative/DEPLOY_FRONTEND_VERCEL.md)**
-- **[Troubleshooting: "Endpoint not available"](07_guide_operative/TROUBLESHOOTING_ENDPOINT_NOT_AVAILABLE.md)**
