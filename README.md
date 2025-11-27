@@ -51,3 +51,5 @@ Per proporre modifiche, creare una Pull Request. Ogni modifica deve essere appro
 - **[MIO: Permessi e Flusso di Lavoro](./07_guide_operative/MIO_PERMESSI_E_FLUSSO_DI_LAVORO.md)**: Come l'agente AI MIO interagisce con il sistema.
 
 - **[Fix: Gestione Errori Gemini API](./07_guide_operative/FIX_GEMINI_ERROR_HANDLING.md)**: Come è stato risolto il bug di crash dell'agente MIO.
+
+- **[Abacus → GitHub via MIHUB](./07_guide_operative/ABACUS_GITHUB_VIA_MIHUB.md)**: Come Abacus accede a GitHub tramite il proxy MIHUB.
