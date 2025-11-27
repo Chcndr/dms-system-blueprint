@@ -36,3 +36,10 @@ Per proporre modifiche, creare una Pull Request. Ogni modifica deve essere appro
 ---
 
 *Questo repository è la fonte unica di verità per la documentazione del sistema DMS Hub.*
+
+
+### Guide Operative Aggiuntive
+
+- **[Procedura Deploy Backend (Hetzner)](07_guide_operative/DEPLOY_BACKEND_HETZNER.md)**
+- **[Procedura Deploy Frontend (Vercel)](07_guide_operative/DEPLOY_FRONTEND_VERCEL.md)**
+- **[Troubleshooting: "Endpoint not available"](07_guide_operative/TROUBLESHOOTING_ENDPOINT_NOT_AVAILABLE.md)**
