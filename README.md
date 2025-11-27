@@ -1,5 +1,7 @@
 # DMS System Blueprint
 
+🔐 **[CREDENTIALS.md](./CREDENTIALS.md)** - Credenziali SSH, API tokens e accessi sistema
+
 Questo repository contiene la documentazione ufficiale, completa e sempre aggiornata dell'ecosistema **DMS (Digital Market System) e MIO-HUB**.
 
 ---
