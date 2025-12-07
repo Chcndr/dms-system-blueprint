@@ -76,6 +76,25 @@ CREATE TABLE agents (
 
 ## 3. Flusso Messaggi
 
+### 3.1. Fix Completo Ecosistema (07/12/2025)
+
+**Problema:** Un errore critico `saveAgentLog is not defined` impediva il salvataggio dei log degli agenti, causando un errore 500 in tutte le chat. Inoltre, gli agenti MIO, Manus, Zapier e GPT Dev non erano funzionanti a causa di problemi di configurazione LLM e gestione dei tool calls.
+
+**Causa:**
+1.  **`saveAgentLog`:** Errore di sintassi in `routes/orchestrator.js` (commento JSDoc non chiuso e parentesi graffa extra).
+2.  **Agenti non funzionanti:** Mancata gestione dei `tool_calls` nelle risposte di Gemini, nomi agenti non allineati e configurazioni mancanti nel file `src/modules/orchestrator/llm.js`.
+
+**Soluzione:**
+1.  Correzione della sintassi in `orchestrator.js`.
+2.  Modifica di `llm.js` per gestire correttamente i `tool_calls`.
+3.  Aggiornamento di `orchestrator.js` per processare la nuova struttura di risposta.
+4.  Aggiunta di un alias per `gptdev` → `dev`.
+5.  Allineamento dei nomi degli agenti in `validAgents`.
+
+**Stato:** ✅ **RISOLTO**. Tutti gli agenti sono ora operativi e il sistema è stabile.
+
+### 3.2. Gestione Messaggi
+
 Per risolvere il bug dei messaggi duplicati, il backend ora salva i messaggi solo in due tabelle:
 
 1. **`conversations_messages`**: per lo storico della conversazione
