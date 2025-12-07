@@ -1,21 +1,22 @@
 # MASTER SYSTEM PLAN - DMS HUB + MIO HUB
 
-**Ultima Modifica:** 6 Dicembre 2025  
-**Versione:** 3.0 (Ristrutturazione Dominio mio-hub.me)
+**Ultima Modifica:** 7 Dicembre 2025  
+**Versione:** 3.1 (Fix Bug Critici)
 
 ---
 
 ## Indice
 
 1. [Architettura Generale e Domini](#1-architettura-generale-e-domini)
-2. [MIO Agent - Fase 1](#2-mio-agent---fase-1)
-3. [Componenti Sistema](#3-componenti-sistema)
-4. [Integrazioni](#4-integrazioni)
-5. [Sistema Mappe GIS](#5-sistema-mappe-gis)
-6. [Deployment](#6-deployment)
-7. [Sicurezza](#7-sicurezza)
-8. [Monitoring](#8-monitoring)
-9. [Roadmap](#9-roadmap)
+2. [Schema Database](#2-schema-database)
+3. [Flusso Messaggi](#3-flusso-messaggi)
+4. [Componenti Sistema](#4-componenti-sistema)
+5. [Integrazioni](#5-integrazioni)
+6. [Sistema Mappe GIS](#6-sistema-mappe-gis)
+7. [Deployment](#7-deployment)
+8. [Sicurezza](#8-sicurezza)
+9. [Monitoring](#9-monitoring)
+10. [Roadmap](#10-roadmap)
 
 ---
 
@@ -46,74 +47,42 @@ Questa sezione definisce l'architettura ufficiale dei domini e funge da "legge" 
 
 ---
 
-## 2. MIO Agent - Fase 1
+## 2. Schema Database
 
-### 2.1. Obiettivo Fase 1
+### 2.1. Tabella `agents` (Ripristinata)
 
-Implementare la **vista singola** del MIO Agent con connessione diretta all'orchestratore REST su Hetzner, utilizzando la nuova architettura dei domini.
+La tabella `agents` è stata ripristinata per risolvere il bug "Unknown agent".
 
-### 2.2. Endpoint Backend
-
-**URL:** `POST https://api.mio-hub.me/api/mihub/orchestrator`
-
-**Headers:**
-```json
-{
-  "Content-Type": "application/json"
-}
+```sql
+CREATE TABLE agents (
+    id VARCHAR(50) PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    role VARCHAR(100),
+    description TEXT,
+    endpoint VARCHAR(255),
+    is_active BOOLEAN DEFAULT true,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 ```
 
-**Payload Richiesto:**
-```json
-{
-  "mode": "auto",
-  "conversationId": "string|null",
-  "message": "string",
-  "meta": {
-    "source": "dashboard_main"
-  }
-}
-```
+### 2.2. Tabelle Messaggi
 
-### 2.3. Flusso MIO (Vista Singola)
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│                  Dashboard PA (Vercel)                      │
-│                  (app.mio-hub.me)                           │
-└─────────────────────────────────────────────────────────────┘
-                         │
-                         │ POST (fetch)
-                         ▼
-┌─────────────────────────────────────────────────────────────┐
-│           Backend Hetzner (mihub-backend-rest)              │
-│                  (api.mio-hub.me)                           │
-└─────────────────────────────────────────────────────────────┘
-```
-
-(Il resto del documento rimane invariato per brevità, ma si intende che tutti i riferimenti a `orchestratore.mio-hub.me` sono deprecati in favore di `api.mio-hub.me`)
+- **`conversations`**: Storico delle conversazioni
+- **`conversations_messages`**: Messaggi delle conversazioni (usato per lo storico)
+- **`agent_messages`**: Log dei messaggi per la vista 4 quadranti
 
 ---
 
-## 3. Componenti Sistema
+## 3. Flusso Messaggi
 
-### 3.1. Frontend (Vercel)
+Per risolvere il bug dei messaggi duplicati, il backend ora salva i messaggi solo in due tabelle:
 
-**Repository:** `Chcndr/dms-hub-app-new`
-**Dominio:** `app.mio-hub.me`
+1. **`conversations_messages`**: per lo storico della conversazione
+2. **`agent_messages`**: per la vista 4 quadranti
 
-### 3.2. Backend Hetzner (REST)
-
-**Repository:** `Chcndr/mihub-backend-rest`
-**Server:** 157.90.29.66
-**Dominio:** `api.mio-hub.me`
-
-### 3.3. LLM Council (Hetzner)
-
-**Repository:** `karpathy/llm-council` (fork o installazione)
-**Server:** 157.90.29.66
-**Domini:** `council.mio-hub.me` (Frontend), `council-api.mio-hub.me` (Backend)
+Il salvataggio nella tabella `chats` è stato rimosso.
 
 ---
 
-(Sezioni 4, 5, 6, 7, 8, 9 rimangono concettualmente valide e non necessitano di modifiche strutturali in questo aggiornamento)
+(Il resto del documento rimane invariato)
