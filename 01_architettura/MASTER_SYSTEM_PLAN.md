@@ -290,3 +290,38 @@ Il salvataggio nella tabella `chats` è stato rimosso.
 ---
 
 (Il resto del documento rimane invariato)
+
+
+---
+
+## 12. LOG ATTIVITÀ - 7 Dicembre 2025
+
+Questa sezione documenta l'intensa attività di debug, analisi e fix eseguita in data 7 Dicembre 2025 per risolvere un problema critico di configurazione della `GEMINI_API_KEY` e per comprendere a fondo l'architettura reale dell'ecosistema MIO Hub.
+
+### 12.1. Problema Iniziale: `GEMINI_API_KEY not configured`
+
+L'indagine è partita da un errore 500 restituito dall'orchestratore MIO, che segnalava l'assenza della chiave API di Gemini. Questo ha dato il via a un'analisi a cascata che ha rivelato una serie di problemi di configurazione e incomprensioni sull'architettura.
+
+### 12.2. Cronologia delle Scoperte e dei Fix
+
+| Ora (circa) | Attività | Scoperta / Risultato | Stato |
+| :--- | :--- | :--- | :--- |
+| 21:00 | Analisi iniziale `llm.js` | Il codice cercava di caricare `../secrets`, ma il file non esisteva. | **Problema** |
+| 21:15 | Creazione `secrets.js` | Creato un modulo `secrets.js` che leggeva da `.env` con `dotenv`. | **Fix Tentato** |
+| 21:30 | Errore `getSecret is not a function` | Il codice si aspettava un metodo `getSecret()`, non una variabile diretta. | **Nuovo Problema** |
+| 21:45 | Analisi `secure_credentials` | Scoperto che i secrets sono salvati nel database Neon, cifrati con AES-256-GCM. | **Svolta** |
+| 22:00 | Errore connessione DB | Il backend non si connetteva a Neon ma a `localhost:5432`. | **Root Cause** |
+| 22:15 | Fix `config/database.js` | Modificato il file per usare `POSTGRES_URL` dal `.env`, risolvendo la connessione al DB. | **Fix Critico** |
+| 22:30 | Fix `llm.js` | Modificato il codice per usare `await secrets.getSecret('GEMINI_API_KEY')`. | **Fix Codice** |
+| 22:45 | Rate Limit Gemini (429) | Il sistema funzionava ma la chiave API (vecchia) era in rate limit. | **Progresso** |
+| 23:00 | Confusione su Abacus | Abacus forniva dati reali ("Frutta e Verdura Rossi") che sembravano allucinazioni. | **Mistero** |
+| 23:30 | Analisi Dati Reali | Verificato che i dati dei mercati e dei venditori **SONO REALI** e presenti nel database Neon. | **Svolta #2** |
+| 23:45 | Aggiornamento Chiave API | L'utente ha aggiornato la `GEMINI_API_KEY` nella dashboard con quella del piano a pagamento. | **Fix Finale** |
+| 00:00 | **SISTEMA FUNZIONANTE** | Test finale con esito positivo. MIO Agent risponde correttamente. | **RISOLTO** |
+
+### 12.3. Lezioni Apprese
+
+1.  **La Fonte di Verità è il Codice:** Non fidarsi di documentazione potenzialmente obsoleta. L'analisi diretta del codice e del comportamento reale del sistema è l'unica via per la verità.
+2.  **Abacus non Allucina (stavolta):** L'agente Abacus stava correttamente interrogando il database Neon e riportando dati reali, che inizialmente sono stati scambiati per allucinazioni. Questo conferma la sua capacità di accedere e analizzare dati live.
+3.  **Bootstrap Problem dei Secrets:** La connection string del database (`POSTGRES_URL`) deve risiedere in un file `.env` o in una variabile d'ambiente, poiché è necessaria per connettersi al database stesso dove risiedono gli altri secrets.
+4.  **Architettura Verificata:** L'ecosistema è complesso e distribuito. Il backend Node.js su Hetzner si connette a un database Neon che contiene sia i dati operativi (mercati, venditori) sia i secrets cifrati dell'applicazione.
