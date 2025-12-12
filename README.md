@@ -267,7 +267,7 @@ SELECT COUNT(*) FROM mio_agent_logs;
 
 ## 📝 Changelog
 
-### [2.0.0] - 2025-12-11 - Operazione "Specchio Reale"
+### [2.1.0] - 2025-12-12 - Fix e Miglioramenti Operativi
 
 **Added**:
 - ✅ Documentazione LIVE_SYSTEM_DEC2025 completa
@@ -285,6 +285,13 @@ SELECT COUNT(*) FROM mio_agent_logs;
 - ✅ Tab "Logs" ora visualizza tutti i 573 logs
 - ✅ Tab "Guardian Logs" mostra 72 logs agenti
 - ✅ Sezione Guardian nella pagina MIO Agent funzionante
+- ✅ Fix crash backend (SyntaxError: Identifier 'abacusIsland' already declared)
+- ✅ Abilitazione orchestrator endpoint (`/api/mihub/orchestrator`)
+- ✅ Implementazione routing diretto per Abacus (bypass Gemini per query SQL)
+- ✅ Fix parametro query SQL (`query` -> `sql`)
+- ✅ Fix accesso al risultato SQL (`response.data.result` -> `response.data.rows`)
+- ✅ Implementazione pulsante STOP rosso sempre visibile nella sezione MIO Agent (Dashboard PA)
+- ✅ Implementazione pulsante STOP rosso nel widget chat flottante
 
 ---
 
@@ -325,7 +332,7 @@ SELECT COUNT(*) FROM mio_agent_logs;
 
 ---
 
-**Ultimo Aggiornamento**: 11 Dicembre 2025  
-**Versione**: 2.0.0  
-**Maintainer**: Team MIO Hub  
-**Status**: ✅ Operativo in Produzione
+328	**Ultimo Aggiornamento**: 12 Dicembre 2025  
+329	**Versione**: 2.1.0  
+330	**Maintainer**: Team MIO Hub  
+331	**Status**: ✅ Operativo in Produzione
