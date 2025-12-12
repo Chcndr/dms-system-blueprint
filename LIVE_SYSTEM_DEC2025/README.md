@@ -154,13 +154,56 @@ Le credenziali di accesso ai servizi (Database, Server, API Keys) sono documenta
 
 ## 🔄 Aggiornamenti
 
-Questa documentazione viene aggiornata ogni volta che il sistema subisce modifiche significative. L'ultimo aggiornamento è stato effettuato l'**11 Dicembre 2025** nell'ambito dell'**Operazione "Specchio Reale"**.
+Questa documentazione viene aggiornata ogni volta che il sistema subisce modifiche significative.
+
+### Aggiornamento 12 Dicembre 2025 (Sera) - "Sistema Doppio Canale FRONTSTAGE/BACKSTAGE"
+
+**Modifiche implementate**:
+- ✅ Implementato Sistema "Doppio Canale" per tutti gli agenti
+- ✅ Aggiunto parametro `conversationId` a `callAgent()` in `llm.js`
+- ✅ Iniezione dinamica istruzioni FRONTSTAGE/BACKSTAGE nei messaggi
+- ✅ **FRONTSTAGE** (User ↔ Agente): Tono conversazionale, amichevole, professionale
+- ✅ **BACKSTAGE** (MIO ↔ Agente): Tono tecnico, esecutivo, sintetico/JSON
+- ✅ Modificato `orchestrator.js` per passare `conversationId` a tutte le chiamate `callAgent()`
+- ✅ Logging per debug modalità canale
+
+**Logica**:
+- Se `conversationId` contiene `mio-{agent}-coordination` → Modalità BACKSTAGE
+- Altrimenti → Modalità FRONTSTAGE
+
+**Commit**: `d0f3e63`  
+**File modificati**: 2 (llm.js, orchestrator.js)  
+**Status**: Pushato su GitHub, in attesa di deploy
+
+**Benefici**:
+- Agenti più amichevoli nelle chat singole con gli utenti
+- Agenti più efficienti nel coordinamento con MIO
+- Riduzione "chiacchiere" nelle comunicazioni interne
+- Miglioramento UX complessiva
+
+### Aggiornamento 12 Dicembre 2025 (Mattina) - "Completamento Routing Zapier"
+
+**Modifiche implementate**:
+- ✅ Implementato routing "Doppio Canale" per Zapier in `orchestrator.js`
+- ✅ Aggiunta funzione `saveDirectMessage` in `database.js` per gestione isole
+- ✅ Integrato `zapierToolExecutor` per esecuzione tools Zapier (list_available_actions, run_action, find_action)
+- ✅ Fixato errore 500 MIO causato da risposta Gemini malformata in `llm.js`
+- ✅ Rafforzato system prompt Zapier con regole fondamentali e documentazione tools
+- ✅ Zapier ora supporta isole `user-zapier-direct` e `mio-zapier-coordination`
+
+**Commit**: `b220918`  
+**File modificati**: 3 (+273 righe, -17 righe)  
+**Status**: Deployato in produzione su Hetzner
+
+### Aggiornamento 11 Dicembre 2025 - "Operazione Specchio Reale"
+
+Riorganizzazione completa blueprint e stabilizzazione sistema dopo refactoring critico.
 
 Per segnalare discrepanze tra questa documentazione e il sistema reale, contattare il team di sviluppo.
 
 ---
 
-**Versione Sistema**: 2.0.0  
-**Data Documentazione**: 11 Dicembre 2025  
+**Versione Sistema**: 2.1.0  
+**Data Documentazione**: 12 Dicembre 2025  
 **Autore**: Manus AI Agent  
 **Repository**: [Chcndr/dms-system-blueprint](https://github.com/Chcndr/dms-system-blueprint)
