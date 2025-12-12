@@ -156,6 +156,27 @@ Le credenziali di accesso ai servizi (Database, Server, API Keys) sono documenta
 
 Questa documentazione viene aggiornata ogni volta che il sistema subisce modifiche significative.
 
+### Aggiornamento 13 Dicembre 2025 - "Fix Vista 4 Agenti + Timestamp Universali"
+
+**Modifiche implementate**:
+- ✅ **Fix Vista 4 Agenti**: Corretto filtro messaggi per usare endpoint `/api/mihub/get-messages` invece di endpoint inesistente
+- ✅ **Timestamp Chat Principale**: Aggiunto timestamp (HH:MM) a tutti i messaggi User ↔ MIO
+- ✅ **Timestamp Chat Singole**: Aggiunto timestamp a GPT Dev, Manus, Abacus, Zapier
+- ✅ **Preservazione created_at**: Fixato mapping messaggi per preservare campo timestamp
+- ✅ **Fix etichette MIO**: Sistema ora distingue correttamente "MIO" da "Utente" usando campo `sender`
+
+**Problema risolto**:
+Vista 4 Agenti mostrava messaggi User→MIO nel pannello Manus perché `useAgentLogs.ts` chiamava endpoint inesistente `/api/mihub/direct-messages/` invece di `/api/mihub/get-messages`.
+
+**Commit**: `114d17c`  
+**File modificati**: 2 (useAgentLogs.ts, DashboardPA.tsx)  
+**Status**: Deployato su Vercel
+
+**Benefici**:
+- Vista 4 Agenti ora mostra SOLO messaggi MIO ↔ Agenti (backstage)
+- Timestamp visibili in TUTTE le chat per migliore tracciabilità
+- UX migliorata con informazioni temporali complete
+
 ### Aggiornamento 12 Dicembre 2025 (Sera) - "Sistema Doppio Canale FRONTSTAGE/BACKSTAGE"
 
 **Modifiche implementate**:
