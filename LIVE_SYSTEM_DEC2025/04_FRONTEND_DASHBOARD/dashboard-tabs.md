@@ -120,13 +120,31 @@ La Dashboard PA è organizzata in **27 tabs** che coprono tutte le funzionalità
   - Role: `user` (utente può interagire direttamente)
 - Uso: Coordinamento multi-agente, monitoraggio parallelo task
 
-**C. Attività Agenti Recente (Guardian)**
+**C. Shared Workspace - Lavagna Collaborativa** ✨ NUOVO (15/12/2024)
+- Area di lavoro condivisa tra utente e agenti
+- Libreria: tldraw v4.2.1
+- Dimensioni: Full width × 700px (+ toggle fullscreen)
+- Features:
+  - ✅ Tema dark integrato
+  - ✅ Auto-save ogni 10 secondi
+  - ✅ Pulsante Save manuale e Export JSON
+  - ✅ Drag & drop file
+  - ✅ API per input programmatico agenti (`window.sharedWorkspaceAPI`)
+  - ✅ Persistenza DB tramite conversationId
+- Posizionamento: Tra "Chat Multi-Agente" e "Attività Agenti Recente"
+- Endpoint Backend (da implementare):
+  - `POST /api/workspace/save` - Salva snapshot JSON
+  - `GET /api/workspace/load` - Carica snapshot salvato
+- Uso: Gli agenti possono disegnare automaticamente schemi, diagrammi, report
+- File Sorgente: `client/src/components/SharedWorkspace.tsx`
+
+**D. Attività Agenti Recente (Guardian)**
 - Sezione in basso che mostra ultimi 50 eventi agenti
 - Endpoint: `GET /api/guardian/logs?limit=50`
 - Aggiornamento automatico ogni 10s
 - Mostra: Agent, Status (ALLOWED/BLOCKED), Endpoint, Response Time
 
-**D. System Health Check**
+**E. System Health Check**
 - Stato endpoint Guardian API
 - Verifica: `/api/logs/initSchema`, `/api/logs/createLog`, `/api/logs/getLogs`, `/api/logs/stats`, `/api/guardian/health`
 
@@ -137,6 +155,8 @@ La Dashboard PA è organizzata in **27 tabs** che coprono tutte le funzionalità
 - ✅ Timestamp (HH:MM) in tutti i messaggi
 - ✅ Label messaggi corrette (Tu/MIO/Agente)
 - ✅ Pulsante STOP in Chat Principale e Vista Singola
+- ✅ Shared Workspace con tldraw (lavagna collaborativa)
+- ✅ API per input programmatico agenti
 - ✅ Logs real-time
 - ✅ Health monitoring
 - ✅ Conversation persistence (localStorage)
@@ -150,7 +170,9 @@ La Dashboard PA è organizzata in **27 tabs** che coprono tutte le funzionalità
 - `client/src/hooks/useConversationPersistence.tsx` (persistenza conversazioni)
 
 **Changelog Recenti** (Dicembre 2024):
-- **14/12/2024**: Fix timestamp Chat Principale MIO + Vista 4 Agenti default
+- **15/12/2024**: ✨ FASE 3: Shared Workspace con tldraw (lavagna collaborativa)
+- **15/12/2024**: 🟢 FASE 2: Status Bar Backend/PM2 con indicatori LED
+- **14/12/2024**: 🎨 FASE 1: Fix timestamp Chat Principale MIO + Vista 4 Agenti default
 - **14/12/2024**: Fix label messaggi (MIO/Tu/Agente) in tutte le viste
 - **14/12/2024**: Aggiunto pulsante STOP in Vista Singola Agente
 - **14/12/2024**: Rimosso reset viewMode che causava vista singola all'apertura
@@ -576,6 +598,78 @@ Slot riservati per future funzionalità.
 ---
 
 ## 🧩 Componenti Condivisi
+
+### SystemStatusIndicators ✨ NUOVO (15/12/2024)
+
+**Path**: `client/src/hooks/useSystemStatus.ts` + inline in `DashboardPA.tsx`
+
+**Descrizione**: Indicatori LED per monitoraggio stato sistema in tempo reale.
+
+**Features**:
+- 🟢 Indicatore Backend API (ping `/api/mihub/health`)
+- 🟢 Indicatore PM2 Status (ping `/api/system/pm2-status`)
+- Colori dinamici: 🟢 Verde (Online), 🔴 Rosso (Offline), 🟡 Giallo (Checking)
+- Polling automatico ogni 30 secondi
+- Animazione pulse quando online
+- Posizionamento: Header globale Dashboard PA (visibile in tutte le sezioni)
+- Timeout 5s per ogni check
+
+**Hook `useSystemStatus`**:
+```typescript
+export function useSystemStatus(pollInterval: number = 30000): SystemStatusResult {
+  const [apiStatus, setApiStatus] = useState<SystemStatus>('checking');
+  const [pm2Status, setPm2Status] = useState<SystemStatus>('checking');
+  // ...
+}
+```
+
+**Endpoint Backend Richiesti**:
+- `GET /api/mihub/health` - Backend API health check
+- `GET /api/system/pm2-status` - PM2 process status
+
+---
+
+### SharedWorkspace ✨ NUOVO (15/12/2024)
+
+**Path**: `client/src/components/SharedWorkspace.tsx`
+
+**Descrizione**: Lavagna collaborativa con tldraw per output complessi e annotazioni.
+
+**Props**:
+```typescript
+interface SharedWorkspaceProps {
+  conversationId?: string;
+  onSave?: (snapshot: any) => void;
+}
+```
+
+**Features**:
+- ✅ Integrazione tldraw v4.2.1
+- ✅ Tema dark
+- ✅ Full width × 700px (+ toggle fullscreen)
+- ✅ Auto-save ogni 10 secondi
+- ✅ Pulsante Save manuale e Export JSON
+- ✅ Drag & drop file
+- ✅ API per input programmatico agenti (`window.sharedWorkspaceAPI`)
+- ✅ Persistenza DB tramite conversationId
+- ✅ Header con status saving e last saved timestamp
+
+**API Agenti**:
+```javascript
+window.sharedWorkspaceAPI = {
+  addShape: (shapeData) => {},
+  getSnapshot: () => {},
+  loadSnapshot: (snapshot) => {}
+}
+```
+
+**Endpoint Backend Richiesti**:
+- `POST /api/workspace/save` - Salva snapshot JSON
+- `GET /api/workspace/load?conversationId={id}` - Carica snapshot salvato
+
+**Uso**: Gli agenti possono disegnare automaticamente schemi DB, diagrammi architettura, report visivi.
+
+---
 
 ### GuardianLogsSection
 
