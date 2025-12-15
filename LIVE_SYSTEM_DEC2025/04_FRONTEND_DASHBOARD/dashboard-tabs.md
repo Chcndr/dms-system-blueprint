@@ -120,8 +120,27 @@ La Dashboard PA è organizzata in **27 tabs** che coprono tutte le funzionalità
   - Role: `user` (utente può interagire direttamente)
 - Uso: Coordinamento multi-agente, monitoraggio parallelo task
 
-**C. Shared Workspace - Lavagna Collaborativa** ✨ NUOVO (15/12/2024)
-- Area di lavoro condivisa tra utente e agenti
+**C. Shared Workspace - Lavagna Collaborativa** ✨ NUOVO (15/12/2025)
+- Area di lavoro condivisa tra utente e agenti per output complessi (diagrammi, schemi, report visivi)
+- Libreria: tldraw v4.2.1 (lavagna digitale open-source)
+- Persistenza: Database NEON PostgreSQL con JSONB
+- Features:
+  - Full width × 700px (+ modalità fullscreen)
+  - Auto-save ogni 10 secondi su database NEON
+  - Pulsanti: Save (manuale), Export (JSON locale), Fullscreen
+  - Tema dark con `inferDarkMode`
+  - API agenti `window.sharedWorkspaceAPI` per disegno automatico
+  - Toolbar completa: forme, colori, dimensioni, undo/redo
+- Backend Endpoints:
+  - `POST /api/workspace/save` - Salva snapshot JSONB
+  - `GET /api/workspace/load?conversationId=...` - Carica snapshot
+  - `GET /api/workspace/list` - Lista snapshot (debug)
+  - `DELETE /api/workspace/delete?conversationId=...` - Elimina snapshot
+- Fix Applicati:
+  - `autoFocus={false}` per evitare conflitti focus
+  - Dimensioni esplicite container per rendering corretto
+  - `useCallback` per `handleAutoSave` per evitare re-render loop
+- Status: ✅ FUNZIONANTE E STABILE
 - Libreria: tldraw v4.2.1
 - Dimensioni: Full width × 700px (+ toggle fullscreen)
 - Features:
@@ -836,7 +855,51 @@ Database (Neon PostgreSQL)
 
 ---
 
-**Ultimo Aggiornamento**: 11 Dicembre 2025  
-**Versione Dashboard**: 2.0.0  
+## 📝 Changelog
+
+### [2025-12-15] FASE 1-2-3 Completate - MIO Agent Enhancements
+
+#### Added
+- ✨ **Status Bar Backend/PM2**: Indicatori LED (🟢 API Online, 🟢 PM2 Online) nell'header globale della Dashboard PA
+- ✨ **Shared Workspace**: Lavagna collaborativa tldraw v4.2.1 con persistenza NEON PostgreSQL
+- 🔌 **6 Nuovi Endpoint Backend**:
+  - `GET /api/system/health` - Backend API health check
+  - `GET /api/system/pm2-status` - PM2 process status
+  - `POST /api/workspace/save` - Salva snapshot lavagna
+  - `GET /api/workspace/load` - Carica snapshot lavagna
+  - `GET /api/workspace/list` - Lista snapshot (debug)
+  - `DELETE /api/workspace/delete` - Elimina snapshot
+- 🤖 **API Agenti**: `window.sharedWorkspaceAPI` per disegno automatico sulla lavagna
+- 🔍 **Hook useSystemStatus**: Polling 30s per monitoraggio real-time sistema
+- 🎨 **Componente SystemStatusIndicators**: LED indicators con colori dinamici (🟢🔴🟡)
+
+#### Changed
+- 🏷️ **Label Messaggi**: Logica condizionale "Tu"/"MIO"/"[Nome Agente]" basata su sender
+- ⏱️ **Timestamp**: Formato HH:MM in tutti i messaggi (Chat MIO, Vista Singola, Vista 4 Agenti)
+- 📊 **Vista Default**: Vista 4 Agenti (griglia) mostrata all'apertura MIO Agent invece di Vista Singola
+- 🎯 **Header Altezza**: Ridotta da `py-6` a `py-3` per look più sottile e moderno
+
+#### Fixed
+- ⏸️ **Pulsante STOP Vista Singola**: Aggiunto con stati `sending` dedicati per ogni agente (gptdev, manus, abacus, zapier)
+- 🌐 **URL Backend**: Corretto dominio da `mihub.157-90-29-66.nip.io` a `https://api.mio-hub.me`
+- 🔄 **Logica viewMode**: Rimosso reset a 'single' da pulsante MIO Agent e handleMioSend
+- 🎨 **Rendering tldraw**: Fix con `autoFocus={false}` e dimensioni esplicite container
+- 🔁 **Re-render Loop tldraw**: Fix con `useCallback` per `handleAutoSave` con dipendenze corrette
+
+#### Database
+- 🗄️ **Tabella workspace_snapshots**: Creata su NEON PostgreSQL con JSONB per snapshot tldraw
+- 🔒 **Constraint UNIQUE**: Su `conversation_id` per UPSERT logic
+- ✅ **Persistenza Confermata**: 3 snapshot salvati e caricati correttamente
+
+#### Deploy
+- 🚀 **Frontend Vercel**: 11 commits, branch master, deploy automatico
+- 📦 **Backend Hetzner**: PM2 restart completato, processo online (PID 433057, uptime 7d 2h)
+- 🟢 **Status Produzione**: API Online + PM2 Online
+
+---
+
+**Ultimo Aggiornamento**: 15 Dicembre 2025, 03:45 CET  
+**Versione Dashboard**: 2.1.0  
 **Framework**: React 18 + Vite + TypeScript  
-**Deploy**: Vercel
+**Deploy**: Vercel + Hetzner (PM2)  
+**Database**: NEON PostgreSQL
