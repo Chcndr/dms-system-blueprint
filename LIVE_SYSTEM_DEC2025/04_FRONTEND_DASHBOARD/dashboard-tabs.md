@@ -82,26 +82,43 @@ La Dashboard PA è organizzata in **27 tabs** che coprono tutte le funzionalità
 #### Sezioni:
 
 **A. Chat Principale MIO** (sempre visibile)
-- Chat diretta con MIO
+- Chat diretta con MIO (GPT-5 Coordinatore)
 - Input messaggio + invio
-- Visualizzazione conversazione
+- Visualizzazione conversazione con timestamp (HH:MM formato italiano)
+- Label messaggi: "Tu" (utente), "MIO" (orchestrator), "AGENTE" (nome agente)
+- Pulsante STOP per interrompere elaborazione in corso
 - Endpoint: `POST /api/mihub/orchestrator`
+- Context: `MioContext` per gestione stato condiviso
 
-**B. Vista Singola / Vista 4 Agenti** (toggle)
+**B. Chat Multi-Agente** (sezione espandibile)
+
+**Default**: Vista 4 Agenti (griglia) - mostrata all'apertura della pagina
+
+**Toggle**: Vista Singola / Vista 4 Agenti
 
 **Vista Singola**:
-- 4 pannelli separati per conversazioni dirette con singoli agenti
-- Agenti: Manus, Abacus, Zapier, GPT Dev
-- Ogni pannello ha:
-  - Chat dedicata
-  - Conversation ID: `{agent}-single` (es. `manus-single`)
-  - Role: `user` (utente parla direttamente)
+- Conversazione diretta con UN singolo agente alla volta
+- Agenti disponibili: GPT Dev (Sviluppatore), Manus (Esecutivo), Abacus (Analisi), Zapier (Automazioni)
+- Features:
+  - Chat dedicata full-screen
+  - Timestamp (HH:MM) su ogni messaggio
+  - Label: "Tu" (utente), "da MIO" (delegazione orchestrator), "[nome agente]" (risposta agente)
+  - Pulsante STOP nell'header per interrompere elaborazione
+  - Contatore messaggi nell'header
+  - Conversation ID: `{agent}-single` (es. `gptdev-single`)
+  - Role: `user` (utente parla direttamente all'agente)
 
-**Vista 4 Agenti**:
-- 4 pannelli per coordinamento backstage MIO ↔ Agent
-- Conversation ID: `mio-{agent}-coordination` (es. `mio-manus-coordination`)
-- Role: `system` (MIO coordina, user non vede)
-- MIO orchestra gli agenti per completare task complessi
+**Vista 4 Agenti** (griglia):
+- 4 mini-chat in griglia 2x2 per monitoraggio simultaneo
+- Agenti: GPT Dev, Manus, Abacus, Zapier
+- Features per ogni mini-chat:
+  - Visualizzazione ultimi messaggi
+  - Timestamp (HH:MM) già presente da prima
+  - Input dedicato per inviare messaggi diretti
+  - Scroll automatico agli ultimi messaggi
+  - Conversation ID: `mio-{agent}-quad` (es. `mio-gptdev-quad`)
+  - Role: `user` (utente può interagire direttamente)
+- Uso: Coordinamento multi-agente, monitoraggio parallelo task
 
 **C. Attività Agenti Recente (Guardian)**
 - Sezione in basso che mostra ultimi 50 eventi agenti
@@ -116,10 +133,27 @@ La Dashboard PA è organizzata in **27 tabs** che coprono tutte le funzionalità
 **Features**:
 - ✅ Chat multi-agente funzionante
 - ✅ Toggle Vista Singola / Vista 4 Agenti
+- ✅ Vista 4 Agenti come default all'apertura
+- ✅ Timestamp (HH:MM) in tutti i messaggi
+- ✅ Label messaggi corrette (Tu/MIO/Agente)
+- ✅ Pulsante STOP in Chat Principale e Vista Singola
 - ✅ Logs real-time
 - ✅ Health monitoring
+- ✅ Conversation persistence (localStorage)
+- ✅ Optimistic UI per messaggi utente
 
-**File Sorgente**: `client/src/pages/DashboardPA.tsx` (linee 3865-4570)
+**File Sorgente**: 
+- `client/src/pages/DashboardPA.tsx` (linee 3865-4570)
+- `client/src/contexts/MioContext.tsx` (gestione stato MIO)
+- `client/src/components/multi-agent/MultiAgentChatView.tsx` (Vista 4 Agenti)
+- `client/src/hooks/useAgentLogs.tsx` (caricamento messaggi agenti)
+- `client/src/hooks/useConversationPersistence.tsx` (persistenza conversazioni)
+
+**Changelog Recenti** (Dicembre 2024):
+- **14/12/2024**: Fix timestamp Chat Principale MIO + Vista 4 Agenti default
+- **14/12/2024**: Fix label messaggi (MIO/Tu/Agente) in tutte le viste
+- **14/12/2024**: Aggiunto pulsante STOP in Vista Singola Agente
+- **14/12/2024**: Rimosso reset viewMode che causava vista singola all'apertura
 
 ---
 
