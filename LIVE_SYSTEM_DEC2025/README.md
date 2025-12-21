@@ -48,12 +48,12 @@ L'architettura del sistema è organizzata in 8 "isole" conversazionali indipende
 
 ### Isole Vista Singola (User → Agent Diretto)
 
-Nelle conversazioni Vista Singola, l'utente interagisce direttamente con un singolo agente senza intermediazione di MIO. Ogni isola ha un `conversation_id` nel formato `{agent}-single`:
+Nelle conversazioni Vista Singola, l'utente interagisce direttamente con un singolo agente senza intermediazione di MIO. Ogni isola ha un `conversation_id` nel formato `user-{agent}-direct`:
 
-- **Island 1**: `manus-single` - User ↔ Manus
-- **Island 2**: `abacus-single` - User ↔ Abacus  
-- **Island 3**: `zapier-single` - User ↔ Zapier
-- **Island 4**: `gptdev-single` - User ↔ GPT Dev
+- **Island 1**: `user-manus-direct` - User ↔ Manus
+- **Island 2**: `user-abacus-direct` - User ↔ Abacus  
+- **Island 3**: `user-zapier-direct` - User ↔ Zapier
+- **Island 4**: `user-gptdev-direct` - User ↔ GPT Dev
 
 ### Isole Vista 4 Agenti (MIO Coordina Backstage)
 
@@ -156,6 +156,30 @@ Le credenziali di accesso ai servizi (Database, Server, API Keys) sono documenta
 
 Questa documentazione viene aggiornata ogni volta che il sistema subisce modifiche significative.
 
+### Aggiornamento 21 Dicembre 2025 - "Fix Chat Singole e Duplicazione Messaggi"
+
+**Modifiche implementate**:
+- ✅ **Fix duplicazione messaggi**: Corretto bug che salvava il messaggio utente due volte nelle chat singole. `saveAgentLog` ora viene chiamato SOLO per mode 'auto' (Vista 4 Agenti), non per mode 'direct' (chat singole)
+- ✅ **Fix visualizzazione risposte**: Aggiunto `refetch()` in `useAgentLogs.ts` per ricaricare i messaggi dopo l'invio, garantendo che le risposte degli agenti appaiano immediatamente
+- ✅ **Fix inizializzazione conversationId**: `useConversationPersistence.ts` ora inizializza sincronamente il `conversationId` per evitare chiamate API con ID null
+- ✅ **Nuovi conversation_id**: Rinominati da `{agent}-single` a `user-{agent}-direct` per maggiore chiarezza
+- ✅ **Chat MIO principale**: Usa `mio-main` come conversation_id fisso
+
+**File modificati**:
+- `mihub-backend-rest/routes/orchestrator.js` - Condizione `if (mode !== 'direct')` per saveAgentLog
+- `dms-hub-app-new/client/src/hooks/useAgentLogs.ts` - Aggiunta funzione `refetch()`
+- `dms-hub-app-new/client/src/hooks/useConversationPersistence.ts` - Inizializzazione sincrona
+- `dms-hub-app-new/client/src/pages/DashboardPA.tsx` - Chiamata `refetch*()` dopo invio messaggi
+
+**Commit Backend**: `9515e14`
+**Commit Frontend**: `7935213`
+**Status**: Deployato su Hetzner e Vercel
+
+**Benefici**:
+- Chat singole ora funzionano correttamente senza duplicazione
+- Risposte agenti visibili immediatamente dopo l'invio
+- Architettura più pulita con separazione netta tra mode 'auto' e 'direct'
+
 ### Aggiornamento 13 Dicembre 2025 - "Fix Vista 4 Agenti + Timestamp Universali"
 
 **Modifiche implementate**:
@@ -224,7 +248,7 @@ Per segnalare discrepanze tra questa documentazione e il sistema reale, contatta
 
 ---
 
-**Versione Sistema**: 2.1.0  
-**Data Documentazione**: 12 Dicembre 2025  
+**Versione Sistema**: 2.2.0  
+**Data Documentazione**: 21 Dicembre 2025  
 **Autore**: Manus AI Agent  
 **Repository**: [Chcndr/dms-system-blueprint](https://github.com/Chcndr/dms-system-blueprint)
