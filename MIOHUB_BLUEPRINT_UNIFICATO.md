@@ -507,6 +507,53 @@ Piano sviluppo organizzato per quarter:
 
 ---
 
+## 📌 TODO - CONFIGURAZIONI FUTURE
+
+### ⚠️ S3 Storage (Cloudflare R2) - DA CONFIGURARE
+
+**Stato:** Predisposto ma NON ancora configurato
+
+**Cosa serve:** Storage esterno per documenti, allegati, file di grandi dimensioni.
+
+**Quando configurare:** Quando il sistema inizierà a gestire molti documenti/allegati.
+
+**Come configurare:**
+1. Creare account Cloudflare (se non esiste)
+2. Andare su Cloudflare Dashboard → R2 Object Storage
+3. Creare un bucket (es. "miohub-documents")
+4. Generare API Token con permessi R2
+5. Configurare le variabili d'ambiente su Hetzner:
+   ```bash
+   ssh root@157.90.29.66
+   nano /root/mihub-backend-rest/.env
+   # Aggiungere:
+   R2_ACCOUNT_ID=xxx
+   R2_ACCESS_KEY_ID=xxx
+   R2_SECRET_ACCESS_KEY=xxx
+   R2_BUCKET_NAME=miohub-documents
+   ```
+6. Riavviare PM2: `pm2 restart mihub-backend`
+
+**Endpoint già pronti:**
+- `POST /api/documents/upload` - Upload file
+- `GET /api/documents/:id` - Download file  
+- `GET /api/documents` - Lista documenti
+- `DELETE /api/documents/:id` - Elimina documento
+
+**Tabella database:** `documents` (già creata in Neon)
+
+---
+
+### ⚠️ PDND API - DA CONFIGURARE
+
+**Stato:** Predisposto ma NON ancora configurato
+
+**Cosa serve:** Interoperabilità con Piattaforma Digitale Nazionale Dati (PagoPA)
+
+**Quando configurare:** Quando servirà integrazione con altri sistemi PA.
+
+---
+
 ## 📝 CHANGELOG
 
 ### v3.1.0 (30/12/2025)
