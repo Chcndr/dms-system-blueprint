@@ -1,6 +1,6 @@
 # 🏗️ MIO HUB - BLUEPRINT UNIFICATO DEL SISTEMA
 
-> **Versione:** 3.0.0  
+> **Versione:** 3.1.0  
 > **Data:** 30 Dicembre 2025  
 > **Autore:** Sistema documentato da Manus AI  
 > **Stato:** PRODUZIONE
@@ -508,6 +508,13 @@ Piano sviluppo organizzato per quarter:
 ---
 
 ## 📝 CHANGELOG
+
+### v3.1.0 (30/12/2025)
+- **FIX Health Monitor:** Guardian e MIO Agent ora verificati come moduli interni (non più URL esterni inesistenti)
+- **FIX API Logger:** Corretto middleware per catturare `req.originalUrl` invece di `req.path` (che viene modificato dai router Express)
+- **Imprese API Logs:** Ora le chiamate a `/api/imprese/*` vengono loggate correttamente con `service_id: imprese.api`
+- **Dipendenze installate:** `@aws-sdk/client-s3`, `@aws-sdk/s3-request-presigner`, `adm-zip`, `xml2js`
+- Aggiornato middleware `apiLogger.js` v1.1.0
 
 ### v3.0.0 (30/12/2025)
 - Creato Blueprint unificato
