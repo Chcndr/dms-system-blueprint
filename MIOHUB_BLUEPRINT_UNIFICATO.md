@@ -556,6 +556,15 @@ Piano sviluppo organizzato per quarter:
 
 ## 📝 CHANGELOG
 
+### v3.2.0 (30/12/2025) - "Collaudo MIO Agent Completo"
+- ✅ **Collaudo completo MIO Agent** - Tutti gli agenti testati e funzionanti
+- ✅ **Fix orchestratorClient.ts** - Gestione errori non-JSON (rate limiting, timeout, server non disponibile)
+- ✅ **Fix duplicati frontend** - Sistema "fingerprint" anti-duplicati nel polling
+- ✅ **Fix sezione Attività Agenti** - Ripristinata sezione che carica da `agent_messages` invece di `guardian_logs`
+- ✅ **Fix ordinamento messaggi** - Parametro `order=desc` in get-messages.ts per messaggi recenti
+- ✅ **Test completati:** MIO coordinamento multi-agente, Zapier, GPT Dev, Abacus, Manus
+- Sistema operativo all'85%+
+
 ### v3.1.0 (30/12/2025)
 - **FIX Health Monitor:** Guardian e MIO Agent ora verificati come moduli interni (non più URL esterni inesistenti)
 - **FIX API Logger:** Corretto middleware per catturare `req.originalUrl` invece di `req.path` (che viene modificato dai router Express)
@@ -609,6 +618,49 @@ Piano sviluppo organizzato per quarter:
 
 ---
 
-> **Nota:** Questo documento è la fonte di verità per il sistema MIO HUB.
-> Ogni agente AI deve leggerlo prima di effettuare modifiche.
-> Per documentazione dettagliata, consultare le cartelle LIVE_SYSTEM_DEC2025 e 00_LEGACY_ARCHIVE.
+---
+
+## 📌 REGOLE FONDAMENTALI PER AGENTI AI
+
+### 🚨 REGOLA #1: UN SOLO BLUEPRINT
+
+**File unico di riferimento:** `MIOHUB_BLUEPRINT_UNIFICATO.md`
+
+- **SEMPRE** aggiornare SOLO questo file
+- **MAI** creare file di documentazione duplicati
+- **MAI** modificare altri file di documentazione senza aggiornare questo
+- Prima di ogni modifica al sistema, leggere questo file
+- Dopo ogni modifica al sistema, aggiornare il CHANGELOG di questo file
+
+### 🚨 REGOLA #2: WORKFLOW MODIFICHE
+
+1. Leggere il Blueprint prima di iniziare
+2. Fare le modifiche al codice
+3. Testare le modifiche
+4. Aggiornare il CHANGELOG del Blueprint
+5. Committare Blueprint insieme al codice
+6. **MAI** lasciare il Blueprint non aggiornato
+
+### 🚨 REGOLA #3: DOVE SONO I FILE
+
+| Cosa | Dove |
+|------|------|
+| Blueprint UNICO | `dms-system-blueprint/MIOHUB_BLUEPRINT_UNIFICATO.md` |
+| Frontend | `dms-hub-app-new/` |
+| Backend | `mihub-backend-rest/` |
+| Credenziali | File locale utente (MAI su GitHub) |
+
+### 🚨 REGOLA #4: PRIMA DI MODIFICARE
+
+```
+✅ Ho letto il Blueprint?
+✅ So quale file modificare?
+✅ Ho verificato che non creo duplicati?
+✅ Aggiornerò il CHANGELOG dopo?
+```
+
+---
+
+> **Nota:** Questo documento è la **UNICA fonte di verità** per il sistema MIO HUB.
+> Ogni agente AI **DEVE** leggerlo prima di effettuare modifiche.
+> **NON esistono altri file di documentazione validi.**
