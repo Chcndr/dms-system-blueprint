@@ -156,6 +156,45 @@ Le credenziali di accesso ai servizi (Database, Server, API Keys) sono documenta
 
 Questa documentazione viene aggiornata ogni volta che il sistema subisce modifiche significative.
 
+### Aggiornamento 30 Dicembre 2025 - "Collaudo MIO Agent + Fix Dipendenze Backend"
+
+**Modifiche implementate**:
+- ✅ **Fix orchestratorClient.ts**: Migliorata gestione errori non-JSON (rate limiting, timeout, server non disponibile)
+- ✅ **Fix duplicati frontend**: Implementato sistema "fingerprint" per evitare messaggi duplicati nel polling (confronta ruolo + contenuto + timestamp)
+- ✅ **Fix sezione Attività Agenti**: Ripristinata sezione "Attività Agenti Recente (Guardian)" che carica da `agent_messages` invece di `guardian_logs`
+- ✅ **Fix ordinamento messaggi**: Aggiunto parametro `order=desc` all'API `get-messages.ts` per caricare messaggi più recenti
+- ✅ **Fix dipendenze backend**: Aggiunte dipendenze mancanti al `package.json` del backend:
+  - `@aws-sdk/client-s3`
+  - `@aws-sdk/s3-request-presigner`
+  - `adm-zip`
+  - `xml2js`
+
+**File modificati Frontend (dms-hub-app-new)**:
+- `client/src/api/orchestratorClient.ts` - Gestione errori robusta
+- `client/src/contexts/MioContext.tsx` - Sistema anti-duplicati con fingerprint
+- `client/src/pages/DashboardPA.tsx` - Sezione Attività Agenti + ordinamento DESC
+- `api/mihub/get-messages.ts` - Parametro `order` per ordinamento
+
+**File modificati Backend (mihub-backend-rest)**:
+- `package.json` - Aggiunte dipendenze AWS SDK, adm-zip, xml2js
+
+**Commit Backend**: `9b34dce`
+**Status**: Deployato su Hetzner e Vercel
+
+**Test Completati**:
+- ✅ MIO coordinamento multi-agente (Abacus + Manus)
+- ✅ Zapier azioni disponibili (WhatsApp, Gmail, Calendar, Docs)
+- ✅ GPT Dev lettura file GitHub
+- ✅ Abacus query SQL (542 mercati, 13 imprese)
+
+**Benefici**:
+- Sistema MIO Agent completamente operativo (85%+)
+- Errori gestiti in modo user-friendly
+- Log agenti visibili nella dashboard
+- Backend stabile con tutte le dipendenze
+
+---
+
 ### Aggiornamento 21 Dicembre 2025 - "Fix Chat Singole e Duplicazione Messaggi"
 
 **Modifiche implementate**:
@@ -248,7 +287,7 @@ Per segnalare discrepanze tra questa documentazione e il sistema reale, contatta
 
 ---
 
-**Versione Sistema**: 2.2.0  
-**Data Documentazione**: 21 Dicembre 2025  
+**Versione Sistema**: 2.3.0  
+**Data Documentazione**: 30 Dicembre 2025  
 **Autore**: Manus AI Agent  
 **Repository**: [Chcndr/dms-system-blueprint](https://github.com/Chcndr/dms-system-blueprint)
