@@ -1,6 +1,6 @@
 # 🏗️ MIO HUB - BLUEPRINT UNIFICATO DEL SISTEMA
 
-> **Versione:** 3.3.0  
+> **Versione:** 3.4.0  
 > **Data:** 02 Gennaio 2026  
 > **Autore:** Sistema documentato da Manus AI  
 > **Stato:** PRODUZIONE
@@ -555,6 +555,16 @@ Piano sviluppo organizzato per quarter:
 ---
 
 ## 📝 CHANGELOG
+
+### v3.4.0 (02/01/2026) - "Bug Fix Completo Sistema Verifiche"
+- ✅ **Date picker nei modal:** Fix chiusura automatica con stopPropagation su tutti gli input date
+- ✅ **Toggle storico verifiche SCIA:** 
+  - Mostra "Ultima Verifica" o "Storico Completo"
+  - Punteggio affidabilità calcolato solo su ultima verifica
+- ✅ **Form SCIA mercato/posteggio:** Ora usa CEDENTE invece di subentrante per filtrare
+- ✅ **Semaforo qualificazioni:** Calcolo dinamico stato da data_scadenza (ignora stato DB obsoleto)
+- ✅ **Tag stabile:** v1.6.0-stable creato come punto di ripristino
+- Sistema verifica SCIA completamente funzionante
 
 ### v3.3.0 (02/01/2026) - "Sistema Qualifiche e Concessioni"
 - ✅ **Modal Nuova Concessione migliorato:**
