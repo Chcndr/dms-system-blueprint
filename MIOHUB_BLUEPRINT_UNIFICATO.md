@@ -1,7 +1,7 @@
 # 🏗️ MIO HUB - BLUEPRINT UNIFICATO DEL SISTEMA
 
-> **Versione:** 3.1.0  
-> **Data:** 30 Dicembre 2025  
+> **Versione:** 3.3.0  
+> **Data:** 02 Gennaio 2026  
 > **Autore:** Sistema documentato da Manus AI  
 > **Stato:** PRODUZIONE
 
@@ -555,6 +555,16 @@ Piano sviluppo organizzato per quarter:
 ---
 
 ## 📝 CHANGELOG
+
+### v3.3.0 (02/01/2026) - "Sistema Qualifiche e Concessioni"
+- ✅ **Modal Nuova Concessione migliorato:**
+  - Campo "Mercato" preselezionato in sola visualizzazione
+  - Dropdown "Posteggio" filtra solo posteggi liberi (senza concessione attiva o scaduta)
+  - Conteggio posteggi liberi/totali visualizzato
+  - Ordinamento numerico dei posteggi
+- ✅ **Fix filtro posteggi:** Conversione stall_id a stringa per confronto corretto
+- ✅ **Tag stabile:** v1.5.0-stable creato come punto di ripristino
+- Sistema pronto per test qualifiche SCIA
 
 ### v3.2.0 (30/12/2025) - "Collaudo MIO Agent Completo"
 - ✅ **Collaudo completo MIO Agent** - Tutti gli agenti testati e funzionanti
