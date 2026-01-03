@@ -1,7 +1,7 @@
 # 🏗️ MIO HUB - BLUEPRINT UNIFICATO DEL SISTEMA
 
-> **Versione:** 3.4.0  
-> **Data:** 02 Gennaio 2026  
+> **Versione:** 3.5.0  
+> **Data:** 03 Gennaio 2026  
 > **Autore:** Sistema documentato da Manus AI  
 > **Stato:** PRODUZIONE
 
@@ -555,6 +555,29 @@ Piano sviluppo organizzato per quarter:
 ---
 
 ## 📝 CHANGELOG
+
+### v3.5.0 (03/01/2026) - "Progetto Sistema Concessioni Completo"
+- 📋 **Analisi concessione reale Comune di Bologna:**
+  - Documento 2 pagine: Autorizzazione + Concessione Suolo Pubblico
+  - Identificati 56 campi totali, 25 implementati, 31 mancanti
+- 🆕 **Progetto nuovo modulo Concessioni:**
+  - Nuovo tab "Lista Concessioni" nel pannello SSO SUAP
+  - Vista dettaglio concessione con 5 tab
+  - Funzionalità "Aggiorna Posteggi" per trasferimento subingresso
+  - Tab "Esporta" (PDF, stampa, PEC)
+  - Semaforo stato associazione posteggi (🔴 Da Associare / 🟢 Associato)
+- 🔧 **Campi da aggiungere al form:**
+  - Provincia, P.IVA, Qualità, Sede legale completa
+  - Data decorrenza, Data scadenza (auto-calcolata)
+  - Giorno svolgimento, Limitazioni merceologia
+  - Autorizzazione precedente (PG, data, intestatario)
+  - Planimetria allegata, Prescrizioni
+- 🗄️ **Nuove tabelle database:**
+  - `concessioni` - Archivio concessioni generate
+  - `configurazione_ente` - Personalizzazione per comune
+- 📄 **Documentazione:**
+  - Report progetto completo consegnato
+  - Piano implementazione 14-20 giorni
 
 ### v3.4.0 (02/01/2026) - "Bug Fix Completo Sistema Verifiche"
 - ✅ **Date picker nei modal:** Fix chiusura automatica con stopPropagation su tutti gli input date
