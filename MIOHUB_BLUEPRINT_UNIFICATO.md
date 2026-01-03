@@ -1,6 +1,6 @@
 # 🏗️ MIO HUB - BLUEPRINT UNIFICATO DEL SISTEMA
 
-> **Versione:** 3.5.1  
+> **Versione:** 3.5.2  
 > **Data:** 03 Gennaio 2026  
 > **Autore:** Sistema documentato da Manus AI  
 > **Stato:** PRODUZIONE
@@ -555,6 +555,21 @@ Piano sviluppo organizzato per quarter:
 ---
 
 ## 📝 CHANGELOG
+
+### v3.5.2 (03/01/2026) - "Campi P.IVA Separati in SCIA e Concessione"
+- 🗄️ **Database:**
+  - Aggiunte colonne `sub_partita_iva` e `ced_partita_iva` alla tabella `suap_pratiche`
+  - Migrazione 015 eseguita su Neon PostgreSQL
+- 📝 **Form SCIA:**
+  - Nuova struttura a 4 colonne: Cerca Impresa | P.IVA | CF | Ragione Sociale
+  - Campi P.IVA e CF ora separati (prima era campo unico)
+  - Autocomplete mostra P.IVA e CF separatamente nel dropdown
+- 📝 **Form Concessione:**
+  - Stessa struttura a 4 colonne per Concessionario e Cedente
+  - Campi auto-popolati dopo selezione impresa
+- 🔄 **Backend:**
+  - Service SUAP aggiornato per salvare `sub_partita_iva` e `ced_partita_iva`
+  - Mappatura frontend→backend aggiornata in `handleSciaSubmit`
 
 ### v3.5.1 (03/01/2026) - "Progetto Sistema Concessioni Completo v2"
 - 📋 **Analisi concessione reale Comune di Bologna:**
