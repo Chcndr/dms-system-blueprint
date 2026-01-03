@@ -602,3 +602,77 @@ Ogni chiamata API viene loggata automaticamente nella tabella `mio_agent_logs` c
 **Ultimo Aggiornamento**: 11 Dicembre 2025  
 **Versione API**: 2.0.0  
 **Maintainer**: Team MIO Hub
+
+
+---
+
+## 🔄 Gestione Concessioni (Subingresso)
+
+### POST /api/concessions/:id/associa-posteggio
+
+**NUOVO (03 Gennaio 2026)** - Endpoint per completare il trasferimento di un posteggio durante un subingresso. Esegue in transazione atomica:
+
+1. Disassocia il posteggio dal cedente
+2. Chiude la concessione del cedente (stato → CESSATA)
+3. Associa il posteggio al subentrante
+4. Trasferisce il wallet dal cedente al subentrante
+5. Attiva la nuova concessione (stato → ATTIVA)
+
+**Path Parameters:**
+- `id`: ID della concessione di subingresso (deve essere in stato DA_ASSOCIARE)
+
+**Request Body:** Nessuno (tutti i dati sono già nella concessione)
+
+**Response Success:**
+```json
+{
+  "success": true,
+  "data": {
+    "id": 123,
+    "tipo_concessione": "subingresso",
+    "stato": "ATTIVA",
+    "stall_id": 456,
+    "market_id": 1,
+    "impresa_id": 789
+  },
+  "message": "Posteggio associato con successo. Trasferimento completato."
+}
+```
+
+**Response Error (concessione non trovata):**
+```json
+{
+  "success": false,
+  "error": "Concessione non trovata"
+}
+```
+
+**Response Error (tipo errato):**
+```json
+{
+  "success": false,
+  "error": "Questa operazione è valida solo per concessioni di tipo subingresso"
+}
+```
+
+**Response Error (stato errato):**
+```json
+{
+  "success": false,
+  "error": "La concessione è già stata associata o non è in stato DA_ASSOCIARE"
+}
+```
+
+**Logica Interna:**
+- Verifica che la concessione sia di tipo `subingresso` e stato `DA_ASSOCIARE`
+- Cerca e chiude eventuali concessioni attive del cedente per lo stesso posteggio
+- Aggiorna la tabella `stalls` con il nuovo `vendor_id` e `impresa_id`
+- Trasferisce il saldo del wallet CONCESSION dal cedente al subentrante
+- Aggiorna lo stato della concessione a `ATTIVA`
+
+**File Sorgente:** `routes/concessions.js` (linee 734-917)
+
+**Frontend:** Il pulsante "Associa Posteggio" è visibile nel tab "Aggiorna Posteggi" della modale dettaglio concessione, solo per concessioni di tipo subingresso in stato DA_ASSOCIARE.
+
+---
+

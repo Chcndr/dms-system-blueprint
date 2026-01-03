@@ -1,7 +1,7 @@
 # 🏗️ MIO HUB - BLUEPRINT UNIFICATO DEL SISTEMA
 
-> **Versione:** 3.5.4  
-> **Data:** 03 Gennaio 2026  
+> **Versione:** 3.5.5  
+> **Data:** 03 Gennaio 2026 (Aggiornato ore 07:15)  
 > **Autore:** Sistema documentato da Manus AI  
 > **Stato:** PRODUZIONE
 
@@ -555,6 +555,20 @@ Piano sviluppo organizzato per quarter:
 ---
 
 ## 📝 CHANGELOG
+
+### v3.5.5 (03/01/2026 07:15) - "API Associazione Posteggio Subingresso"
+- 🆕 **Nuovo Endpoint Backend:**
+  - `POST /api/concessions/:id/associa-posteggio` - Trasferimento posteggio per subingresso
+  - Disassocia posteggio dal cedente e associa al subentrante
+  - Chiude concessione cedente (stato → CESSATA)
+  - Trasferisce wallet CONCESSION dal cedente al subentrante
+  - Attiva nuova concessione (stato → ATTIVA)
+- 📁 **File Modificati:**
+  - `mihub-backend-rest/routes/concessions.js` (linee 734-917)
+- 🔄 **Frontend già pronto:**
+  - Tab "Aggiorna Posteggi" in modale dettaglio concessione
+  - Pulsante "Associa Posteggio" per concessioni subingresso DA_ASSOCIARE
+  - File: `dms-hub-app-new/client/src/components/suap/SuapPanel.tsx` (linee 1276-1425)
 
 ### v3.5.4 (03/01/2026) - "Auto-compilazione Concessione da SCIA"
 - 📝 **Form Concessione:**
