@@ -1,7 +1,7 @@
 # 🏗️ MIO HUB - BLUEPRINT UNIFICATO DEL SISTEMA
 
-> **Versione:** 3.5.5  
-> **Data:** 03 Gennaio 2026 (Aggiornato ore 07:15)  
+> **Versione:** 3.5.6  
+> **Data:** 03 Gennaio 2026 (Aggiornato ore 12:45)  
 > **Autore:** Sistema documentato da Manus AI  
 > **Stato:** PRODUZIONE
 
@@ -555,6 +555,26 @@ Piano sviluppo organizzato per quarter:
 ---
 
 ## 📝 CHANGELOG
+
+### v3.5.6 (03/01/2026 12:45) - "Sincronizzazione Liste Concessioni e Vista Statica"
+- 🔄 **Sincronizzazione Liste Concessioni:**
+  - Liste concessioni sincronizzate tra SSO SUAP e Gestione Mercati
+  - Entrambe le liste leggono dalla stessa tabella `concessions`
+  - Aggiunto `stato_calcolato` dinamico: SCADUTA se `valid_to < oggi`
+  - Semafori ora mostrano correttamente lo stato reale delle concessioni
+- 📝 **Vista Statica Concessione (stile SCIA):**
+  - Nuova vista dettaglio concessione identica alla SCIA generata
+  - Sezioni: Frontespizio, Concessionario, Dati Posteggio e Mercato
+  - Card con sfondo scuro e bordi colorati (teal/cyan)
+  - Layout a 3 colonne con label uppercase grigie e valori bianchi
+  - Vista inline nella pagina (non più modale popup)
+- 🆕 **Nuovo Componente:**
+  - `ConcessionForm.tsx` - Form separato per modifica concessione
+- 📁 **File Modificati:**
+  - `mihub-backend-rest/routes/markets.js` - Endpoint con stato_calcolato
+  - `mihub-backend-rest/routes/concessions.js` - Calcolo dinamico stato
+  - `dms-hub-app-new/client/src/components/markets/MarketCompaniesTab.tsx` - Vista statica
+  - `dms-hub-app-new/client/src/components/markets/ConcessionForm.tsx` - Nuovo form
 
 ### v3.5.5 (03/01/2026 07:15) - "API Associazione Posteggio Subingresso"
 - 🆕 **Nuovo Endpoint Backend:**
