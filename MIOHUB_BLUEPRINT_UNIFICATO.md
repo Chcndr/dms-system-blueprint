@@ -1,6 +1,6 @@
 # 🏗️ MIO HUB - BLUEPRINT UNIFICATO DEL SISTEMA
 
-> **Versione:** 3.5.0  
+> **Versione:** 3.5.1  
 > **Data:** 03 Gennaio 2026  
 > **Autore:** Sistema documentato da Manus AI  
 > **Stato:** PRODUZIONE
@@ -556,28 +556,33 @@ Piano sviluppo organizzato per quarter:
 
 ## 📝 CHANGELOG
 
-### v3.5.0 (03/01/2026) - "Progetto Sistema Concessioni Completo"
+### v3.5.1 (03/01/2026) - "Progetto Sistema Concessioni Completo v2"
 - 📋 **Analisi concessione reale Comune di Bologna:**
   - Documento 2 pagine: Autorizzazione + Concessione Suolo Pubblico
   - Identificati 56 campi totali, 25 implementati, 31 mancanti
-- 🆕 **Progetto nuovo modulo Concessioni:**
-  - Nuovo tab "Lista Concessioni" nel pannello SSO SUAP
-  - Vista dettaglio concessione con 5 tab
-  - Funzionalità "Aggiorna Posteggi" per trasferimento subingresso
-  - Tab "Esporta" (PDF, stampa, PEC)
-  - Semaforo stato associazione posteggi (🔴 Da Associare / 🟢 Associato)
-- 🔧 **Campi da aggiungere al form:**
-  - Provincia, P.IVA, Qualità, Sede legale completa
-  - Data decorrenza, Data scadenza (auto-calcolata)
-  - Giorno svolgimento, Limitazioni merceologia
-  - Autorizzazione precedente (PG, data, intestatario)
-  - Planimetria allegata, Prescrizioni
-- 🗄️ **Nuove tabelle database:**
-  - `concessioni` - Archivio concessioni generate
-  - `configurazione_ente` - Personalizzazione per comune
+- 🆕 **5 TIPI DI CONCESSIONE SUPPORTATI:**
+  - **Nuova Autorizzazione** - Prima concessione per posteggio libero
+  - **Subingresso** - Trasferimento da cedente a subentrante (con SCIA)
+  - **Conversione** - 3 sottotipi: Tipo B→A, Merceologia, Dimensioni
+  - **Rinnovo** - Rinnovo concessione in scadenza
+  - **Voltura** - Cambio dati anagrafici/impresa
+- 📝 **Form dinamico:**
+  - Selettore tipo con radio buttons
+  - Campi condizionali che appaiono/scompaiono per tipo
+  - Auto-popolamento da CF e concessione precedente
+- 🚦 **Logica semaforo per tipo:**
+  - Nuova/Conversione/Rinnovo/Voltura: 🟢 Associato (automatico)
+  - Subingresso: 🔴 Da Associare → 🟢 Associato (manuale)
+- 🔄 **Tab "Aggiorna Posteggi":**
+  - Visibile SOLO per subingresso con stato "da_associare"
+  - Trasferisce posteggio + wallet da cedente a subentrante
+- 🗄️ **Database:**
+  - Tabella `concessioni` con campi per tutti i tipi
+  - Enum: tipo_concessione, sottotipo_conversione, stato_concessione
 - 📄 **Documentazione:**
-  - Report progetto completo consegnato
-  - Piano implementazione 14-20 giorni
+  - PROGETTO_SISTEMA_CONCESSIONI_v2.md
+  - TIPI_CONCESSIONE_COMPLETI.md
+  - Piano implementazione 17-24 giorni
 
 ### v3.4.0 (02/01/2026) - "Bug Fix Completo Sistema Verifiche"
 - ✅ **Date picker nei modal:** Fix chiusura automatica con stopPropagation su tutti gli input date
