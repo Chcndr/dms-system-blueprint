@@ -1,6 +1,6 @@
 # 🏗️ MIO HUB - BLUEPRINT UNIFICATO DEL SISTEMA
 
-> **Versione:** 3.5.2  
+> **Versione:** 3.5.3  
 > **Data:** 03 Gennaio 2026  
 > **Autore:** Sistema documentato da Manus AI  
 > **Stato:** PRODUZIONE
@@ -555,6 +555,18 @@ Piano sviluppo organizzato per quarter:
 ---
 
 ## 📝 CHANGELOG
+
+### v3.5.3 (03/01/2026) - "Vista Dettaglio SCIA e PEC Delegato"
+- 📝 **Vista Dettaglio SCIA:**
+  - P.IVA e CF ora separati per Subentrante e Cedente
+  - Rimossi "(Cessionario)" e "(Dante Causa)" dai titoli sezioni
+  - Aggiunto campo PEC nella sezione Delegato
+- 📝 **Form Compilazione SCIA:**
+  - Aggiunto campo "PEC Delegato" (obbligatorio quando c'è delegato)
+- 🗄️ **Database:**
+  - Aggiunta colonna `del_pec` alla tabella `suap_pratiche`
+- 🔄 **Backend:**
+  - Query INSERT aggiornata per salvare PEC delegato
 
 ### v3.5.2 (03/01/2026) - "Campi P.IVA Separati in SCIA e Concessione"
 - 🗄️ **Database:**
