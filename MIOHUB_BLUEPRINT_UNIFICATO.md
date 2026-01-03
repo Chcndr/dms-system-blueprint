@@ -1,6 +1,6 @@
 # 🏗️ MIO HUB - BLUEPRINT UNIFICATO DEL SISTEMA
 
-> **Versione:** 3.5.3  
+> **Versione:** 3.5.4  
 > **Data:** 03 Gennaio 2026  
 > **Autore:** Sistema documentato da Manus AI  
 > **Stato:** PRODUZIONE
@@ -555,6 +555,17 @@ Piano sviluppo organizzato per quarter:
 ---
 
 ## 📝 CHANGELOG
+
+### v3.5.4 (03/01/2026) - "Auto-compilazione Concessione da SCIA"
+- 📝 **Form Concessione:**
+  - Auto-selezione Mercato quando si genera da SCIA
+  - Auto-selezione Posteggio quando si genera da SCIA
+  - Auto-selezione Merceologia quando si genera da SCIA
+  - Aggiunta P.IVA e Provincia al preData dalla SCIA
+  - Select Mercato e Posteggio ora mostrano il valore selezionato
+- 🔄 **Logica:**
+  - Bypass dei selettori quando i dati arrivano dalla SCIA
+  - Tutti i campi si auto-compilano senza intervento manuale
 
 ### v3.5.3 (03/01/2026) - "Vista Dettaglio SCIA e PEC Delegato"
 - 📝 **Vista Dettaglio SCIA:**
