@@ -1,7 +1,7 @@
 # 🏗️ MIO HUB - BLUEPRINT UNIFICATO DEL SISTEMA
 
 > **Versione:** 3.5.7  
-> **Data:** 05 Gennaio 2026 (Aggiornato ore 02:45)  
+> **Data:** 05 Gennaio 2026 (Aggiornato ore 18:30)  
 > **Autore:** Sistema documentato da Manus AI  
 > **Stato:** PRODUZIONE
 
@@ -125,7 +125,12 @@ dms-hub-app-new/
 ├── client/                 # Frontend React
 │   ├── src/
 │   │   ├── pages/         # Pagine dashboard
+│   │   │   ├── DashboardPA.tsx      # Dashboard PA principale
+│   │   │   └── MappaItaliaPage.tsx  # Pagina mappa pubblica
 │   │   ├── components/    # Componenti UI
+│   │   │   ├── GestioneHubPanel.tsx     # 🆕 Cabina di regia Hub (6 sub-tab)
+│   │   │   ├── MappaItaliaComponent.tsx # Mappa admin (completa)
+│   │   │   └── MappaItaliaPubblica.tsx  # 🆕 Mappa pubblica (sola lettura)
 │   │   └── lib/           # Utilities
 │   └── public/            # Asset statici
 ├── server/                 # Backend tRPC (Vercel)
@@ -555,6 +560,41 @@ Piano sviluppo organizzato per quarter:
 ---
 
 ## 📝 CHANGELOG
+
+### v3.5.7 (05/01/2026 18:30) - "Gestione Hub e Mappa Italia Pubblica"
+
+- 🆕 **Nuovo Componente GestioneHubPanel.tsx:**
+  - Cabina di regia per Hub Urbani e di Prossimità
+  - 6 sub-tab: Cruscotto, Rete Hub, Imprese, EcoCarbon, Comunicazione, Report ESG
+  - KPI real-time: Hub Attivi, Imprese Aderenti, Flussi Mensili, Crediti Emessi, Rating ESG
+  - Mappa Hub Territoriali con marker interattivi
+  - Alert & Notifiche: scadenze concessioni, report, adesioni, eventi
+  - Sezione "Hub Attivi nel Territorio" con card dettaglio
+  - Integrato nella DashboardPA al posto del placeholder
+
+- 🆕 **Nuovo Componente MappaItaliaPubblica.tsx:**
+  - Versione pubblica semplificata di MappaItaliaComponent
+  - RIMOSSO: Tab Anagrafica (dati sensibili mercato)
+  - RIMOSSO: Tab Imprese/Concessioni (dati sensibili imprese)
+  - RIMOSSO: Editing posteggi (solo visualizzazione)
+  - RIMOSSO: Scheda impresa dettagliata
+  - RIMOSSO: Pulsante Spunta per assegnazioni
+  - MANTENUTO: Mappa interattiva con zoom Italia/Mercato
+  - MANTENUTO: Lista mercati con ricerca
+  - MANTENUTO: Statistiche posteggi (occupati/liberi/riservati)
+  - MANTENUTO: Lista posteggi in sola lettura
+
+- 📁 **File Creati:**
+  - `dms-hub-app-new/client/src/components/GestioneHubPanel.tsx` - Pannello Gestione Hub
+  - `dms-hub-app-new/client/src/components/MappaItaliaPubblica.tsx` - Mappa pubblica
+
+- 📁 **File Modificati:**
+  - `dms-hub-app-new/client/src/pages/DashboardPA.tsx` - Integrato GestioneHubPanel
+  - `dms-hub-app-new/client/src/pages/MappaItaliaPage.tsx` - Usa MappaItaliaPubblica
+
+- 🔒 **Sicurezza:**
+  - Separazione netta tra vista admin (MappaItaliaComponent) e vista pubblica (MappaItaliaPubblica)
+  - Utenti pubblici non possono accedere a dati sensibili di imprese e concessioni
 
 ### v3.5.6 (03/01/2026 12:45) - "Sincronizzazione Liste Concessioni e Vista Statica"
 - 🔄 **Sincronizzazione Liste Concessioni:**
