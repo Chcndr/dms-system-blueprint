@@ -1,7 +1,7 @@
 # 🏗️ MIO HUB - BLUEPRINT UNIFICATO DEL SISTEMA
 
-> **Versione:** 3.5.10  
-> **Data:** 05 Gennaio 2026 (Aggiornato ore 22:30)  
+> **Versione:** 3.5.11  
+> **Data:** 05 Gennaio 2026 (Aggiornato ore 23:15)  
 > **Autore:** Sistema documentato da Manus AI  
 > **Stato:** PRODUZIONE
 
@@ -560,6 +560,27 @@ Piano sviluppo organizzato per quarter:
 ---
 
 ## 📝 CHANGELOG
+
+### v3.5.11 (05/01/2026 23:15) - "Fix Ricaricamento Dati GIS al Cambio Mercato"
+
+- 🐛 **Bug Fix - Dati GIS non ricaricati al cambio mercato via marker:**
+  - Problema: Cliccando su un marker M, i dati GIS (poligoni posteggi) non venivano ricaricati
+  - Causa: Lo stato loading/mapData non veniva resettato quando cambiava marketId
+  - Soluzione in PosteggiTabPubblica:
+    - Reset loading = true (mostra spinner durante caricamento)
+    - Reset mapData = null (forza ricaricamento GIS)
+    - Reset selectedStallId = null (deseleziona posteggio)
+  - Soluzione in MarketDetailPubblica:
+    - Reset stalls = [] (svuota lista posteggi)
+  - Ora i dati vengono ricaricati correttamente quando si clicca su un marker M
+
+- 📁 **File Modificati:**
+  - `dms-hub-app-new/client/src/components/MappaItaliaPubblica.tsx`
+    - useEffect in PosteggiTabPubblica: aggiunto reset stato al cambio marketId
+    - useEffect in MarketDetailPubblica: aggiunto reset stalls al cambio market.id
+
+- 🔧 **Commit GitHub:** 04f32ec
+- 🚀 **Deploy:** Auto-deploy Vercel completato
 
 ### v3.5.10 (05/01/2026 22:30) - "Bug Fix Mappa Italia Pubblica"
 
