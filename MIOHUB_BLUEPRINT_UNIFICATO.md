@@ -852,3 +852,42 @@ Piano sviluppo organizzato per quarter:
   - Tab Report ESG con indicatori Environmental/Social/Governance
   - Riepilogo dati sistema con contatori reali
 
+
+### v3.5.9 (05/01/2026 19:45) - "Gestione Hub Completa"
+
+#### 🎯 SEZIONE GESTIONE HUB - RIEPILOGO COMPLETO
+
+La sezione "Gestione Hub" è ora completamente operativa nella Dashboard PA.
+Fornisce una "Cabina di Regia Territoriale" per stakeholder (Associazioni, Cluster, Regione).
+
+**Struttura a 6 Tab:**
+
+| Tab | Componente | Endpoint API | Funzionalità |
+|-----|------------|--------------|--------------|
+| **Cruscotto** | Custom | /api/markets, /api/vendors, /api/stalls, /api/concessions | KPI real-time, Alert dinamici, Lista Hub |
+| **Rete Hub** | MappaItaliaComponent | /api/markets/{id}/stalls, /api/gis/market-map | Mappa interattiva mercati e posteggi |
+| **Imprese** | ImpreseQualificazioniPanel | /api/vendors, /api/imprese | Gestione e qualificazione imprese |
+| **EcoCarbon** | WalletPanel | /api/trpc/wallet.* | Sistema crediti carbonio e wallet |
+| **Comunicazione** | NotificationsPanel | /api/notifications | Email, WhatsApp, campagne |
+| **Report ESG** | Custom | Dati calcolati | Indicatori Environmental/Social/Governance |
+
+**KPI Dinamici nel Cruscotto:**
+- Hub Attivi (conteggio mercati)
+- Imprese Aderenti (conteggio vendors)
+- Posteggi Totali (conteggio stalls)
+- Concessioni Attive (conteggio concessions)
+- Tasso Occupazione (calcolato)
+
+**Alert Automatici:**
+- Concessioni in scadenza (entro 30 giorni)
+- Report mensile disponibile
+- Numero imprese attive
+- Prossimo mercato
+- Tasso occupazione posteggi
+
+**File Coinvolti:**
+- `client/src/components/GestioneHubPanel.tsx` - Componente principale (v2.0)
+- `client/src/pages/DashboardPA.tsx` - Integrazione nella dashboard
+
+**Commit GitHub:** 2dec709
+
