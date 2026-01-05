@@ -840,3 +840,15 @@ Piano sviluppo organizzato per quarter:
 > **Nota:** Questo documento è la **UNICA fonte di verità** per il sistema MIO HUB.
 > Ogni agente AI **DEVE** leggerlo prima di effettuare modifiche.
 > **NON esistono altri file di documentazione validi.**
+
+### v3.5.8 (05/01/2026 19:15) - "GestioneHub con Dati Reali"
+
+- 🔄 **GestioneHubPanel.tsx aggiornato:**
+  - KPI calcolati dinamicamente dalle API reali
+  - Endpoint utilizzati: /api/markets, /api/vendors, /api/stalls, /api/concessions
+  - Lista Hub basata sui mercati reali con statistiche posteggi
+  - Alert dinamici: concessioni in scadenza, tasso occupazione
+  - Pulsante "Aggiorna" per refresh dati in tempo reale
+  - Tab Report ESG con indicatori Environmental/Social/Governance
+  - Riepilogo dati sistema con contatori reali
+
