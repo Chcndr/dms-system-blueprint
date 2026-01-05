@@ -1,7 +1,7 @@
 # 🏗️ MIO HUB - BLUEPRINT UNIFICATO DEL SISTEMA
 
-> **Versione:** 3.5.7  
-> **Data:** 05 Gennaio 2026 (Aggiornato ore 18:30)  
+> **Versione:** 3.5.10  
+> **Data:** 05 Gennaio 2026 (Aggiornato ore 22:30)  
 > **Autore:** Sistema documentato da Manus AI  
 > **Stato:** PRODUZIONE
 
@@ -560,6 +560,33 @@ Piano sviluppo organizzato per quarter:
 ---
 
 ## 📝 CHANGELOG
+
+### v3.5.10 (05/01/2026 22:30) - "Bug Fix Mappa Italia Pubblica"
+
+- 🐛 **Bug Fix #1 - Selezione Mercato:**
+  - Problema: Click su marker "Vista Mercato" zoomava sul mercato sbagliato
+  - Causa: onMarketClick non propagava l'ID del mercato cliccato al componente padre
+  - Soluzione: Aggiunto callback onMarketChange che propaga l'ID attraverso la catena:
+    - MappaItaliaPubblica → MarketDetailPubblica → PosteggiTabPubblica → MarketMapComponent
+  - Ora il click su un marker aggiorna correttamente selectedMarket prima dello zoom
+
+- 🐛 **Bug Fix #2 - Macchie Verdi durante Zoom:**
+  - Problema: Poligoni verdi (posteggi) apparivano durante la transizione zoom Italia→Mercato
+  - Causa: Condizione showItalyView cambiava prima che l'animazione fosse completata
+  - Soluzione: Aggiunto controllo isAnimating dal AnimationContext
+  - I poligoni ora appaiono solo DOPO il completamento dell'animazione di zoom
+
+- 📁 **File Modificati:**
+  - `dms-hub-app-new/client/src/components/MappaItaliaPubblica.tsx`
+    - Aggiunto prop onMarketChange a MarketDetailPubblica
+    - Aggiunto prop onMarketChange a PosteggiTabPubblica
+    - Aggiornato onMarketClick per chiamare onMarketChange
+  - `dms-hub-app-new/client/src/components/MarketMapComponent.tsx`
+    - Importato useAnimation da AnimationContext
+    - Aggiunto isAnimating alla condizione di rendering poligoni
+
+- 🔧 **Commit GitHub:** 0aef28a
+- 🚀 **Deploy:** Auto-deploy Vercel attivato
 
 ### v3.5.7 (05/01/2026 18:30) - "Gestione Hub e Mappa Italia Pubblica"
 
