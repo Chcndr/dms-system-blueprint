@@ -1,7 +1,7 @@
 # 🏗️ MIO HUB - BLUEPRINT UNIFICATO DEL SISTEMA
 
-> **Versione:** 3.5.6  
-> **Data:** 03 Gennaio 2026 (Aggiornato ore 12:45)  
+> **Versione:** 3.5.7  
+> **Data:** 05 Gennaio 2026 (Aggiornato ore 02:45)  
 > **Autore:** Sistema documentato da Manus AI  
 > **Stato:** PRODUZIONE
 
@@ -684,6 +684,22 @@ Piano sviluppo organizzato per quarter:
 - ✅ **Fix ordinamento messaggi** - Parametro `order=desc` in get-messages.ts per messaggi recenti
 - ✅ **Test completati:** MIO coordinamento multi-agente, Zapier, GPT Dev, Abacus, Manus
 - Sistema operativo all'85%+
+
+### v3.5.7 (05/01/2026)
+- **VETRINE - Design Migliorato:**
+  - Hero Section con gradient overlay e info overlay (nome, settore, rating)
+  - Effetto zoom al hover sull'immagine principale
+  - Card Info Negozio con design moderno (descrizione quote, badge gradient, contatti in card)
+  - Social Media con pulsanti colorati e gradient (Facebook blu, Instagram multicolor, WhatsApp verde)
+  - Fix Instagram: ora accetta @username, URL completo, o solo username
+  - Fix Facebook: aggiunge automaticamente https://facebook.com/ se necessario
+  - Gallery con effetti hover, overlay gradient e badge numerati
+  - Pulsanti azione più grandi con effetti hover
+- **VETRINE - Fix Navigazione:**
+  - Freccia indietro ora usa `window.history.back()` per tornare alla pagina precedente
+- **VETRINE - Fix Dialog:**
+  - Risolto bug del Dialog che mostrava contenuto fuori dal modal
+  - Aggiunto reset stati form quando cambia impresa selezionata
 
 ### v3.1.0 (30/12/2025)
 - **FIX Health Monitor:** Guardian e MIO Agent ora verificati come moduli interni (non più URL esterni inesistenti)
