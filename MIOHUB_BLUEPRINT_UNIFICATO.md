@@ -1182,3 +1182,251 @@ CREATE TABLE hub_shops (
 
 **Commit GitHub:** 5afb2d0
 
+
+
+---
+
+### v3.5.13 (06/01/2026 23:30) - "Sistema HUB Completo con Mappa Interattiva"
+
+#### 🎯 PANORAMICA SISTEMA HUB
+
+Il sistema HUB è stato completamente implementato con:
+- **12 HUB Market** per le principali città italiane
+- **Mappa interattiva** con Vista Italia ↔ Vista HUB
+- **Visualizzazione negozi** come punti/marker sulla mappa
+- **Selettore Mercato/HUB** per switchare tra le due modalità
+
+---
+
+#### 🗺️ COMPONENTI FRONTEND
+
+**File Principali:**
+
+| Componente | Path | Descrizione |
+|------------|------|-------------|
+| `HubMarketMapComponent` | `client/src/components/HubMarketMapComponent.tsx` | Clone di MarketMapComponent con supporto HUB |
+| `GestioneHubMapWrapper` | `client/src/components/GestioneHubMapWrapper.tsx` | Wrapper con selettore Mercato/HUB |
+| `GestioneHubPanel` | `client/src/components/GestioneHubPanel.tsx` | Pannello principale Gestione Hub Territoriale |
+
+**HubMarketMapComponent - Caratteristiche:**
+
+1. **Vista Italia** - Zoom 6, centro [42.5, 12.5]
+   - Marker "M" rossi per i Mercati
+   - Marker "H" viola per gli HUB
+
+2. **Vista HUB** - Zoom 16, centro su HUB selezionato
+   - Poligono area HUB (viola tratteggiato)
+   - Marker negozi con lettera (A, B, C...)
+   - Colori negozi: verde=attivo, grigio=inattivo, rosso=chiuso
+
+3. **Animazioni**
+   - `flyTo` con durata dinamica basata su differenza zoom
+   - Fine corsa basato su `area_geojson` (hubBounds)
+
+**Props HubMarketMapComponent:**
+
+```typescript
+interface HubMarketMapComponentProps {
+  // Props base mappa
+  mapData?: MapData;
+  center?: [number, number];
+  zoom?: number;
+  height?: string;
+  
+  // Props Vista Italia
+  allMarkets?: Market[];
+  allHubs?: HubLocation[];
+  showItalyView?: boolean;
+  viewTrigger?: number;
+  
+  // Props HUB
+  mode?: 'mercato' | 'hub';
+  selectedHub?: HubLocation;
+  hubCenterFixed?: [number, number];
+  onHubClick?: (hubId: number) => void;
+  onShopClick?: (shop: HubShop) => void;
+}
+```
+
+---
+
+#### 📡 API ENDPOINTS - HUB
+
+**Base URL:** `https://api.mio-hub.me/api/hub`
+
+| Metodo | Endpoint | Descrizione | Risposta |
+|--------|----------|-------------|----------|
+| GET | /locations | Lista tutti gli HUB | `{success, data: HubLocation[], count}` |
+| GET | /locations/:id | Dettaglio HUB con negozi | `{success, data: HubLocation}` |
+| POST | /locations | Crea nuovo HUB | `{success, hubId, shopsCreated, message}` |
+| PATCH | /locations/:id | Aggiorna HUB | `{success, message}` |
+| DELETE | /locations/:id | Elimina HUB | `{success, message}` |
+| POST | /locations/:hubId/shops | Aggiungi negozio | `{success, shopId}` |
+| PATCH | /shops/:id | Aggiorna negozio | `{success, message}` |
+| DELETE | /shops/:id | Elimina negozio | `{success, message}` |
+
+**Esempio GET /api/hub/locations:**
+
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": 7,
+      "name": "Hub Centro",
+      "address": "Via del Centro",
+      "city": "Grosseto",
+      "lat": "42.7589",
+      "lng": "11.1135",
+      "area_geojson": "{\"type\":\"Polygon\",\"coordinates\":[...]}",
+      "shops": [
+        {
+          "id": 1,
+          "letter": "A",
+          "name": "Bar Roma",
+          "lat": "42.7590",
+          "lng": "11.1136",
+          "status": "active"
+        }
+      ]
+    }
+  ],
+  "count": 12
+}
+```
+
+---
+
+#### 🗄️ DATABASE - SCHEMA HUB
+
+**Tabella `hub_locations`:**
+
+| Colonna | Tipo | Descrizione |
+|---------|------|-------------|
+| id | SERIAL | Primary key |
+| market_id | INTEGER | FK a markets (opzionale) |
+| name | VARCHAR(255) | Nome HUB |
+| address | VARCHAR(255) | Indirizzo |
+| city | VARCHAR(100) | Città |
+| lat | DECIMAL(10,8) | Latitudine |
+| lng | DECIMAL(11,8) | Longitudine |
+| center_lat | DECIMAL(10,8) | Latitudine centro |
+| center_lng | DECIMAL(11,8) | Longitudine centro |
+| area_geojson | JSONB | Poligono area GeoJSON |
+| corner_geojson | JSONB | Corner points (fine corsa) |
+| opening_hours | VARCHAR(255) | Orari apertura |
+| active | INTEGER | 1=attivo, 0=inattivo |
+| is_independent | INTEGER | 1=indipendente, 0=legato a mercato |
+| description | TEXT | Descrizione |
+| photo_url | VARCHAR(500) | URL foto |
+| area_sqm | DECIMAL(10,2) | Superficie in mq |
+| created_at | TIMESTAMP | Data creazione |
+| updated_at | TIMESTAMP | Data aggiornamento |
+
+**Tabella `hub_shops`:**
+
+| Colonna | Tipo | Descrizione |
+|---------|------|-------------|
+| id | SERIAL | Primary key |
+| hub_id | INTEGER | FK a hub_locations |
+| shop_number | INTEGER | Numero negozio |
+| letter | VARCHAR(5) | Lettera (A, B, C...) |
+| name | VARCHAR(255) | Nome negozio |
+| category | VARCHAR(100) | Categoria |
+| lat | DECIMAL(10,8) | Latitudine |
+| lng | DECIMAL(11,8) | Longitudine |
+| status | VARCHAR(50) | active/inactive/closed |
+| phone | VARCHAR(50) | Telefono |
+| email | VARCHAR(255) | Email |
+| vetrina_url | VARCHAR(500) | URL vetrina |
+| description | TEXT | Descrizione |
+| created_at | TIMESTAMP | Data creazione |
+| updated_at | TIMESTAMP | Data aggiornamento |
+
+---
+
+#### 🏙️ HUB MARKET CITTÀ ITALIANE
+
+**12 HUB Market creati:**
+
+| ID | Nome | Città | Coordinate |
+|----|------|-------|------------|
+| 7 | Hub Centro | Grosseto | 42.7589, 11.1135 |
+| 8 | HUB Market Roma | Roma | 41.9028, 12.4964 |
+| 9 | HUB Market Milano | Milano | 45.4642, 9.1900 |
+| 11 | HUB Market Torino | Torino | 45.0703, 7.6869 |
+| 12 | HUB Market Firenze | Firenze | 43.7696, 11.2558 |
+| 13 | HUB Market Bologna | Bologna | 44.4949, 11.3426 |
+| 14 | HUB Market Venezia | Venezia | 45.4408, 12.3155 |
+| 15 | HUB Market Genova | Genova | 44.4056, 8.9463 |
+| 16 | HUB Market Palermo | Palermo | 38.1157, 13.3615 |
+| 17 | HUB Market Bari | Bari | 41.1171, 16.8719 |
+| 19 | HUB Market Modena | Modena | 44.6471, 10.9252 |
+| - | HUB Market Napoli | Napoli | 40.8518, 14.2681 |
+
+---
+
+#### 🔄 FLUSSO VISTA ITALIA ↔ VISTA HUB
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                      VISTA ITALIA                           │
+│  - Zoom: 6                                                  │
+│  - Centro: [42.5, 12.5]                                     │
+│  - Marker "H" viola per ogni HUB                            │
+│  - Pulsante: "Vista HUB" (disabilitato)                     │
+└─────────────────────────────────────────────────────────────┘
+                            │
+                            │ Click su HUB
+                            │ (animazione flyTo)
+                            ▼
+┌─────────────────────────────────────────────────────────────┐
+│                       VISTA HUB                             │
+│  - Zoom: 16                                                 │
+│  - Centro: coordinate HUB selezionato                       │
+│  - Poligono area HUB (viola tratteggiato)                   │
+│  - Marker negozi (A, B, C...) colorati per stato            │
+│  - Fine corsa: hubBounds da area_geojson                    │
+│  - Pulsante: "Vista Italia" (attivo)                        │
+└─────────────────────────────────────────────────────────────┘
+                            │
+                            │ Click "Vista Italia"
+                            │ (animazione flyTo)
+                            ▼
+                    [Torna a VISTA ITALIA]
+```
+
+---
+
+#### 🔄 DIFFERENZA HUB vs MERCATI
+
+| Aspetto | HUB | Mercati |
+|---------|-----|---------|
+| **Tabelle DB** | hub_locations, hub_shops | markets, stalls |
+| **Uso** | Centri commerciali, zone negozi fissi | Mercati ambulanti periodici |
+| **Elementi** | Negozi (shops) - **PUNTI** | Posteggi (stalls) - **POLIGONI** |
+| **Marker mappa** | "H" viola | "M" rosso |
+| **Zoom dettaglio** | 16 | 17 |
+| **API base** | /api/hub/locations | /api/markets |
+| **Indipendenza** | Può essere indipendente | Sempre legato a comune |
+| **Visualizzazione** | Marker con lettera | Rettangoli colorati |
+
+---
+
+#### 📁 FILE MODIFICATI
+
+**Frontend (dms-hub-app-new):**
+- `client/src/components/HubMarketMapComponent.tsx` - Nuovo componente mappa HUB
+- `client/src/components/GestioneHubMapWrapper.tsx` - Wrapper con selettore
+- `client/src/components/GestioneHubPanel.tsx` - Integrazione wrapper
+
+**Backend (mihub-backend-rest):**
+- `routes/hub.js` - API endpoints HUB (corretto INSERT)
+
+**Commit GitHub:**
+- `95ba737` - feat: HubMarketMapComponent clone con supporto HUB
+- `87db919` - fix: correzioni mappa HUB - altezza 700px, centro Italia fisso
+- `6053d6f` - feat: aggiunto hubBounds per fine corsa mappa HUB
+
+---
+
