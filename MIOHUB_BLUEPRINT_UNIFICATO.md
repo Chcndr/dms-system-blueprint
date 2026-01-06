@@ -1,7 +1,7 @@
 # 🏗️ MIO HUB - BLUEPRINT UNIFICATO DEL SISTEMA
 
-> **Versione:** 3.5.11  
-> **Data:** 05 Gennaio 2026 (Aggiornato ore 23:15)  
+> **Versione:** 3.5.12  
+> **Data:** 06 Gennaio 2026 (Aggiornato ore 20:00)  
 > **Autore:** Sistema documentato da Manus AI  
 > **Stato:** PRODUZIONE
 
@@ -938,4 +938,190 @@ Fornisce una "Cabina di Regia Territoriale" per stakeholder (Associazioni, Clust
 - `client/src/pages/DashboardPA.tsx` - Integrazione nella dashboard
 
 **Commit GitHub:** 2dec709
+
+
+
+### v3.5.12 (06/01/2026 20:00) - "Slot Editor V3 e API HUB"
+
+#### 🛠️ TOOLS - SLOT EDITOR V3
+
+Lo **Slot Editor V3** è uno strumento per creare e gestire aree HUB con negozi sulla mappa.
+
+**URL:** `https://orchestratore.mio-hub.me/tools/slot_editor_v3_unified.html`
+
+**Funzionalità:**
+| Funzione | Descrizione |
+|----------|-------------|
+| **Disegna Area HUB** | Crea poligono dell'area sulla mappa |
+| **Imposta Centro HUB** | Marker per il centro dell'HUB |
+| **Aggiungi Negozi** | Marker con lettera (A, B, C...) per ogni negozio |
+| **Personalizza Stile** | Colore, trasparenza, spessore bordo dell'area |
+| **Esporta GeoJSON** | Scarica file JSON con tutti i dati |
+| **Salva nel Database** | Salva direttamente su api.mio-hub.me |
+
+**Pulsanti Esporta:**
+| Pulsante | API | Descrizione |
+|----------|-----|-------------|
+| **Esporta GeoJSON** | - | Download file JSON locale |
+| **Esporta per Dashboard Admin** | POST /api/markets | Crea mercato con posteggi |
+| **Salva nel Bus** | DMSBUS | Salva su BUS Hub (richiede connessione) |
+| **Salva nel Database (Pepe GIS)** | POST /api/hub/locations | Crea HUB con negozi |
+
+---
+
+#### 🗄️ DATABASE - SCHEMA HUB
+
+**Tabella `hub_locations`:**
+```sql
+CREATE TABLE hub_locations (
+  id SERIAL PRIMARY KEY,
+  market_id INTEGER REFERENCES markets(id),
+  name VARCHAR(255) NOT NULL,
+  address VARCHAR(255) NOT NULL,
+  city VARCHAR(100) NOT NULL,
+  lat DECIMAL(10,8) NOT NULL,
+  lng DECIMAL(11,8) NOT NULL,
+  center_lat DECIMAL(10,8),
+  center_lng DECIMAL(11,8),
+  area_geojson JSONB,
+  corner_geojson JSONB,
+  opening_hours VARCHAR(255),
+  active INTEGER DEFAULT 1,
+  is_independent INTEGER DEFAULT 0,
+  description TEXT,
+  photo_url VARCHAR(500),
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
+);
+```
+
+**Tabella `hub_shops`:**
+```sql
+CREATE TABLE hub_shops (
+  id SERIAL PRIMARY KEY,
+  hub_id INTEGER REFERENCES hub_locations(id),
+  shop_number INTEGER,
+  letter VARCHAR(5),
+  name VARCHAR(255),
+  category VARCHAR(100),
+  certifications TEXT,
+  owner_id INTEGER,
+  business_name VARCHAR(255),
+  vat_number VARCHAR(20),
+  phone VARCHAR(50),
+  email VARCHAR(255),
+  vetrina_url VARCHAR(500),
+  lat DECIMAL(10,8),
+  lng DECIMAL(11,8),
+  area_mq DECIMAL(10,2),
+  status VARCHAR(50) DEFAULT 'active',
+  opening_hours VARCHAR(255),
+  description TEXT,
+  photo_url VARCHAR(500),
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
+);
+```
+
+---
+
+#### 📡 API ENDPOINTS - HUB
+
+**Base URL:** `https://api.mio-hub.me/api/hub`
+
+| Metodo | Endpoint | Descrizione |
+|--------|----------|-------------|
+| GET | /locations | Lista tutti gli HUB |
+| GET | /locations/:id | Dettaglio HUB con negozi |
+| POST | /locations | Crea nuovo HUB |
+| PATCH | /locations/:id | Aggiorna HUB |
+| DELETE | /locations/:id | Elimina HUB |
+| POST | /locations/:hubId/shops | Aggiungi negozio a HUB |
+| PATCH | /shops/:id | Aggiorna negozio |
+| DELETE | /shops/:id | Elimina negozio |
+
+**Esempio POST /api/hub/locations:**
+```json
+{
+  "name": "Hub Centro Grosseto",
+  "address": "Via Roma 1",
+  "city": "Grosseto",
+  "lat": 42.7589,
+  "lng": 11.1135,
+  "areaGeojson": {
+    "type": "Polygon",
+    "coordinates": [[[11.11, 42.75], [11.12, 42.76], ...]]
+  },
+  "isIndependent": true,
+  "description": "HUB commerciale centro città",
+  "shops": [
+    {
+      "shopNumber": 1,
+      "letter": "A",
+      "name": "Bar Roma",
+      "category": "bar",
+      "lat": 42.7590,
+      "lng": 11.1136
+    }
+  ]
+}
+```
+
+**Risposta:**
+```json
+{
+  "success": true,
+  "hubId": 3,
+  "shopsCreated": 1,
+  "message": "HUB \"Hub Centro Grosseto\" creato con successo"
+}
+```
+
+---
+
+#### 📡 API ENDPOINTS - MERCATI
+
+**Base URL:** `https://api.mio-hub.me/api/markets`
+
+| Metodo | Endpoint | Descrizione |
+|--------|----------|-------------|
+| GET | / | Lista tutti i mercati |
+| GET | /:id | Dettaglio mercato |
+| GET | /:id/stalls | Posteggi del mercato |
+| POST | / | Crea nuovo mercato |
+| PATCH | /:id | Aggiorna mercato |
+| DELETE | /:id | Elimina mercato |
+
+**Esempio POST /api/markets:**
+```json
+{
+  "code": "GR001",
+  "name": "Mercato Centro Grosseto",
+  "municipality": "Grosseto",
+  "days": "Lunedì, Giovedì",
+  "total_stalls": 50,
+  "latitude": 42.7589,
+  "longitude": 11.1135
+}
+```
+
+---
+
+#### 🔄 DIFFERENZA HUB vs MERCATI
+
+| Aspetto | HUB | Mercati |
+|---------|-----|---------|
+| **Tabelle** | hub_locations, hub_shops | markets, stalls |
+| **Uso** | Centri commerciali, zone negozi fissi | Mercati ambulanti periodici |
+| **Elementi** | Negozi (shops) | Posteggi (stalls) |
+| **Indipendenza** | Può essere indipendente | Sempre legato a comune |
+| **API** | /api/hub/locations | /api/markets |
+
+---
+
+**File Modificati:**
+- `mihub-backend-rest/public/tools/slot_editor_v3_unified.html`
+- `mihub-backend-rest/routes/hub.js`
+
+**Commit GitHub:** 5afb2d0
 
