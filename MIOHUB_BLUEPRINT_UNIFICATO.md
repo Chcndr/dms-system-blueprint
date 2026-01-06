@@ -1,7 +1,7 @@
 # 🏗️ MIO HUB - BLUEPRINT UNIFICATO DEL SISTEMA
 
-> **Versione:** 3.5.12  
-> **Data:** 06 Gennaio 2026 (Aggiornato ore 20:00)  
+> **Versione:** 3.5.13  
+> **Data:** 06 Gennaio 2026 (Aggiornato ore 20:50)  
 > **Autore:** Sistema documentato da Manus AI  
 > **Stato:** PRODUZIONE
 
@@ -406,6 +406,35 @@ curl https://orchestratore.mio-hub.me/api/health
 | S3 | Non configurato | Configurare quando necessario |
 | PDND | Non configurato | Normale - per uso futuro |
 
+### Configurazione CORS e Sicurezza
+
+**File:** `mihub-backend-rest/index.js`
+
+**Origini CORS Permesse:**
+```javascript
+const allowedOrigins = [
+  'https://mio-hub.me',
+  'https://www.mio-hub.me',
+  'https://dms-hub-app-new.vercel.app',
+  'https://orchestratore.mio-hub.me',
+  'https://api.mio-hub.me',
+  'https://ms-hub-app-new.vercel.app',
+  'https://dms-cittadini.vercel.app',
+  'https://dms-operatore.vercel.app',
+  'http://localhost:5173',
+  'http://localhost:3000'
+];
+```
+
+**Configurazione Helmet:**
+- `frameguard: false` - Disabilitato per permettere iframe da Vercel
+- `frameAncestors` nel CSP permette embedding da domini autorizzati
+
+**⚠️ IMPORTANTE:** Se aggiungi un nuovo dominio frontend:
+1. Aggiungerlo a `allowedOrigins` in `index.js`
+2. Aggiungerlo a `frameAncestors` nella configurazione helmet
+3. Riavviare PM2: `pm2 restart mihub-backend`
+
 ### Backend non risponde
 
 ```bash
@@ -560,6 +589,34 @@ Piano sviluppo organizzato per quarter:
 ---
 
 ## 📝 CHANGELOG
+
+### v3.5.13 (06/01/2026 20:50) - "Fix CORS e Slot Editor V3"
+
+- 🐛 **Bug Fix CORS - Richieste API da iframe:**
+  - Problema: "Load failed" quando Slot Editor (in iframe da Vercel) chiamava api.mio-hub.me
+  - Causa 1: `X-Frame-Options: SAMEORIGIN` bloccava l'iframe
+  - Causa 2: CORS non restituiva `Access-Control-Allow-Origin` per origini nella lista
+  - Soluzione:
+    - Aggiunto `frameguard: false` alla configurazione helmet
+    - Riscritto middleware CORS con funzione callback per restituire sempre l'origine
+
+- 🐛 **Bug Fix Slot Editor V3:**
+  - Corretto errore sintassi JavaScript (mancava chiusura `}` nel catch)
+  - Popup HUB Area: aggiunto pulsante ✕ per chiudere
+  - Controlli colore/spessore/trasparenza: usato addEventListener invece di onchange inline
+  - Cancella Tutti i Negozi: usato addEventListener invece di onclick
+  - Reset Pianta: aggiunta cancellazione di `dms_editor_autosave`
+  - Aggiunta colonna `area_sqm` alla tabella `hub_locations` per superficie area
+
+- 📁 **File Modificati:**
+  - `mihub-backend-rest/index.js` - Configurazione CORS e helmet
+  - `mihub-backend-rest/src/routes/hub.js` - Aggiunto campo areaSqm
+  - `mihub-backend-rest/public/tools/slot_editor_v3_unified.html` - Correzioni varie
+
+- 🔧 **Commits GitHub:**
+  - `7e81008` - fix: corretto CORS per restituire Access-Control-Allow-Origin
+  - `f1fdaba` - fix: corretto errore sintassi JavaScript
+  - `0d60b74` - feat: aggiunto areaSqm per superficie area HUB
 
 ### v3.5.11 (05/01/2026 23:15) - "Fix Ricaricamento Dati GIS al Cambio Mercato"
 
