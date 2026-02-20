@@ -1,26 +1,33 @@
 # 🏗️ MIO HUB - BLUEPRINT UNIFICATO DEL SISTEMA
 
-> **Versione:** 7.9  
+> **Versione:** 8.0
 > **Data:** 20 Febbraio 2026 (Aggiornato ore 02:30)  
 > **Autore:** Sistema documentato da Manus AI  
 > **Stato:** PRODUZIONE
 
 ---
 
-## 📋 INDICE
+
+## 🔄 CHANGELOG RECENTE (v7.9.1)
 
-1. [Panoramica Sistema](#panoramica-sistema)
-2. [Architettura Completa](#architettura-completa)
-3. [Repository GitHub](#repository-github)
-4. [Servizi e Componenti](#servizi-e-componenti)
-5. [MIO Agent - Sistema Multi-Agente](#mio-agent---sistema-multi-agente)
-6. [Guardian - Sistema di Monitoraggio](#guardian---sistema-di-monitoraggio)
-7. [Database e Storage](#database-e-storage)
-8. [API Endpoints](#api-endpoints)
-9. [Deploy e CI/CD](#deploy-e-cicd)
-10. [Credenziali e Accessi](#credenziali-e-accessi)
-11. [Troubleshooting](#troubleshooting)
-12. [Regole per Agenti AI](#regole-per-agenti-ai)
+> **Data:** 20 Febbraio 2026
+> **Autori:** Manus AI, Claude AI
+
+Questa versione si è concentrata sulla stabilizzazione del backend `mihub-backend-rest`, risolvendo 22 bug critici, alti e medi identificati da un inventario completo di tutti i 635 endpoint.
+
+### Riepilogo dei Fix
+
+- **22 endpoint con errore 500 sono stati fixati e testati in produzione.**
+- **9 falsi positivi** sono stati corretti con validazioni di input (UUID, date) per restituire 404 invece di 500.
+- **12 bug reali** sono stati risolti correggendo query SQL (colonne/tabelle errate) e aggiungendo una migrazione per le tabelle mancanti.
+- **1 timeout** su `/api/imprese` è stato identificato come un falso positivo del test e risolto.
+
+### Merge e Collaborazione
+
+- **Analisi Bug:** Claude AI ha analizzato i 22 errori 500, classificandoli per priorità e suggerendo le cause probabili.
+- **Fix e Deploy:** Manus AI ha implementato i fix, creato le migrazioni, testato in produzione e gestito il deploy automatico su Hetzner.
+- **Documentazione:** Il Blueprint è stato aggiornato con l'inventario completo degli endpoint e il dettaglio di tutti i fix.
+
 
 ---
 
