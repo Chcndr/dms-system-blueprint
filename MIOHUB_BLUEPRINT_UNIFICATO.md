@@ -1,7 +1,7 @@
 # 🏗️ MIO HUB - BLUEPRINT UNIFICATO DEL SISTEMA
 
-> **Versione:** 3.5.13  
-> **Data:** 06 Gennaio 2026 (Aggiornato ore 20:50)  
+> **Versione:** 7.9  
+> **Data:** 20 Febbraio 2026 (Aggiornato ore 02:30)  
 > **Autore:** Sistema documentato da Manus AI  
 > **Stato:** PRODUZIONE
 
@@ -302,26 +302,1124 @@ POST /api/guardian/debug/testEndpoint
 
 ---
 
-## 🔌 API ENDPOINTS
+## 🔌 API ENDPOINTS — INVENTARIO COMPLETO
 
-### Endpoint Index (153 endpoint totali)
+> **Ultimo scan:** 19/02/2026 21:22  
+> **Backend:** `mihub-backend-rest` su Hetzner (157.90.29.66:3000)  
+> **Base URL:** `https://mihub.157-90-29-66.nip.io` / `https://orchestratore.mio-hub.me`
 
-Gli endpoint sono documentati in:
-```
-/home/ubuntu/dms-hub-app-new/client/public/api-index.json
-```
+### Sommario
 
-### Categorie Principali
+| Metrica | Valore |
+|---------|--------|
+| **Endpoint totali** | 635 |
+| **File route** | 70 |
+| **GET** | 328 |
+| **POST** | 214 |
+| **PUT** | 48 |
+| **DELETE** | 36 |
+| **PATCH** | 9 |
 
-| Categoria | Prefisso | Esempi |
-|-----------|----------|--------|
-| **DMS Hub** | `/api/trpc/dmsHub.*` | bookings, inspections, locations |
-| **Guardian** | `/api/guardian/*` | health, logs, testEndpoint |
-| **MIO Hub** | `/api/mihub/*` | orchestrator, chats, messages |
-| **Logs** | `/api/logs/*` | createLog, getLogs, stats |
-| **Health** | `/api/health/*` | full, history, alerts |
-| **GIS** | `/api/gis/*` | market-map |
-| **Imprese** | `/api/imprese/*` | qualificazioni, rating |
+### Risultati Test GET (produzione)
+
+| Stato | Conteggio | Significato |
+|-------|-----------|-------------|
+| **200 OK** | 265 | Funzionanti |
+| **400 Bad Request** | 12 | Parametri mancanti (atteso) |
+| **401 Unauthorized** | 6 | Auth richiesta (atteso) |
+| **404 Not Found** | 22 | Record test non esiste (atteso) |
+| **500 Server Error** | 22 | Bug reali da investigare |
+| **Timeout** | 1 | Connessione lenta/bloccata |
+
+### Endpoint con errore 500 (da investigare)
+
+| Endpoint | File | Note |
+|----------|------|------|
+| `/api/autorizzazioni/next-number` | autorizzazioni.js | Server error |
+| `/api/bandi/matching/1` | bandi.js | Server error |
+| `/api/documents` | documents.js | Server error |
+| `/api/documents/1` | documents.js | Server error |
+| `/api/documents/1/download` | documents.js | Server error |
+| `/api/inspections/1` | inspections.js | Server error |
+| `/api/mihub/chats/1` | chats.js | Server error |
+| `/api/presenze/storico/dettaglio/1/1` | presenze.js | Server error |
+| `/api/qualificazioni/durc/1` | qualificazioni.js | Server error |
+| `/api/qualificazioni/suap/1` | qualificazioni.js | Server error |
+| `/api/security/threats/alerts` | security.js | Server error |
+| `/api/security/threats/patterns` | security.js | Server error |
+| `/api/storico/dettaglio/1/1` | presenze.js | Server error |
+| `/api/suap/documenti/1/download` | suap.js | Server error |
+| `/api/suap/pratiche/1` | suap.js | Server error |
+| `/api/suap/pratiche/1/azioni` | suap.js | Server error |
+| `/api/suap/pratiche/1/checks` | suap.js | Server error |
+| `/api/suap/pratiche/1/documenti` | suap.js | Server error |
+| `/api/suap/pratiche/1/eventi` | suap.js | Server error |
+| `/api/tcc/merchant/1/reimbursements` | tcc.js | Server error |
+| `/api/tcc/v2/impresa/1/wallet/transactions` | tcc-v2.js | Server error |
+| `/api/verbali/impresa/1` | verbali.js | Server error |
+
+### Endpoint Timeout
+
+| Endpoint | File | Note |
+|----------|------|------|
+| `/api/imprese` | imprese.js | Timeout/Unreachable |
+
+### Inventario per Modulo
+
+#### `abacusGithub.js` — 3 endpoint
+**Mount:** `/api/abacus/github`
+
+| Metodo | Path |
+|--------|------|
+| POST | `/api/abacus/github/list` |
+| POST | `/api/abacus/github/get` |
+| POST | `/api/abacus/github/update` |
+
+#### `abacusSql.js` — 4 endpoint
+**Mount:** `/api/abacus/sql`
+
+| Metodo | Path |
+|--------|------|
+| POST | `/api/abacus/sql/query` |
+| POST | `/api/abacus/sql/count` |
+| GET | `/api/abacus/sql/tables` |
+| POST | `/api/abacus/sql/schema` |
+
+#### `admin.js` — 5 endpoint
+**Mount:** `/admin`
+
+| Metodo | Path |
+|--------|------|
+| POST | `/admin/secrets` |
+| GET | `/admin/secrets` |
+| DELETE | `/admin/secrets/:name` |
+| POST | `/admin/secrets/init` |
+| POST | `/admin/deploy-backend` |
+
+#### `adminDeploy.js` — 2 endpoint
+**Mount:** `/api/admin`
+
+| Metodo | Path |
+|--------|------|
+| POST | `/api/admin/deploy-backend` |
+| GET | `/api/admin/deploy-status` |
+
+#### `adminMigrate.js` — 2 endpoint
+**Mount:** `/api/admin`
+
+| Metodo | Path |
+|--------|------|
+| POST | `/api/admin/migrate` |
+| GET | `/api/admin/tables` |
+
+#### `adminSecrets.js` — 3 endpoint
+**Mount:** `/api/admin/secrets`
+
+| Metodo | Path |
+|--------|------|
+| GET | `/api/admin/secrets/meta` |
+| GET | `/api/admin/secrets/categories` |
+| GET | `/api/admin/secrets/stats` |
+
+#### `apiSecrets.js` — 3 endpoint
+**Mount:** `/api/secrets`
+
+| Metodo | Path |
+|--------|------|
+| POST | `/api/secrets/:key` |
+| GET | `/api/secrets/:key` |
+| DELETE | `/api/secrets/:key` |
+
+#### `auth.js` — 9 endpoint
+**Mount:** `/api/auth`
+
+| Metodo | Path |
+|--------|------|
+| GET | `/api/auth/config` |
+| GET | `/api/auth/login` |
+| POST | `/api/auth/callback` |
+| POST | `/api/auth/refresh` |
+| POST | `/api/auth/logout` |
+| GET | `/api/auth/me` |
+| GET | `/api/auth/verify` |
+| POST | `/api/auth/register` |
+| POST | `/api/auth/login` |
+
+#### `autorizzazioni.js` — 6 endpoint
+**Mount:** `/api/autorizzazioni`
+
+| Metodo | Path |
+|--------|------|
+| GET | `/api/autorizzazioni` |
+| GET | `/api/autorizzazioni/:id` |
+| POST | `/api/autorizzazioni` |
+| PUT | `/api/autorizzazioni/:id` |
+| DELETE | `/api/autorizzazioni/:id` |
+| GET | `/api/autorizzazioni/next-number` |
+
+#### `bandi.js` — 18 endpoint
+**Mount:** `/api/bandi`
+
+| Metodo | Path |
+|--------|------|
+| GET | `/api/bandi/associazioni` |
+| GET | `/api/bandi/associazioni/:id` |
+| POST | `/api/bandi/associazioni` |
+| PUT | `/api/bandi/associazioni/:id` |
+| GET | `/api/bandi/catalogo` |
+| GET | `/api/bandi/catalogo/:id` |
+| POST | `/api/bandi/catalogo` |
+| GET | `/api/bandi/matching/:bando_id` |
+| GET | `/api/bandi/servizi` |
+| GET | `/api/bandi/servizi/categorie` |
+| GET | `/api/bandi/richieste` |
+| POST | `/api/bandi/richieste` |
+| PUT | `/api/bandi/richieste/:id` |
+| GET | `/api/bandi/richieste/stats` |
+| GET | `/api/bandi/regolarita` |
+| GET | `/api/bandi/regolarita/stats` |
+| PUT | `/api/bandi/regolarita/:id` |
+| GET | `/api/bandi/stats` |
+
+#### `canone-unico.js` — 20 endpoint
+**Mount:** `/api/canone-unico`
+
+| Metodo | Path |
+|--------|------|
+| GET | `/api/canone-unico/riepilogo` |
+| POST | `/api/canone-unico/genera-canone-annuo` |
+| POST | `/api/canone-unico/genera-pagamento-straordinario` |
+| POST | `/api/canone-unico/calcola-mora` |
+| PUT | `/api/canone-unico/concessions/:id/status` |
+| GET | `/api/canone-unico/impostazioni/:comune_id` |
+| PUT | `/api/canone-unico/impostazioni/:comune_id` |
+| GET | `/api/canone-unico/imprese-concessioni` |
+| GET | `/api/canone-unico/semaforo-rate/:wallet_id/:anno` |
+| GET | `/api/canone-unico/semaforo-impresa/:impresa_id/:anno` |
+| DELETE | `/api/canone-unico/scadenze/:anno` |
+| DELETE | `/api/canone-unico/scadenza/:id` |
+| POST | `/api/canone-unico/wallet/:id/azzera` |
+| GET | `/api/canone-unico/scadenza/:id` |
+| POST | `/api/canone-unico/wallets/azzera-tutti` |
+| GET | `/api/canone-unico/impostazioni-mora` |
+| PUT | `/api/canone-unico/impostazioni-mora` |
+| POST | `/api/canone-unico/aggiorna-mora` |
+| GET | `/api/canone-unico/posteggi-mercato/:mercato_id` |
+| GET | `/api/canone-unico/ricariche-spunta` |
+
+#### `chats.js` — 3 endpoint
+**Mount:** `/api/mihub/chats`
+
+| Metodo | Path |
+|--------|------|
+| GET | `/api/mihub/chats/:room` |
+| POST | `/api/mihub/chats/:room` |
+| DELETE | `/api/mihub/chats/:room` |
+
+#### `citizens.js` — 4 endpoint
+**Mount:** `/api/citizens`
+
+| Metodo | Path |
+|--------|------|
+| GET | `/api/citizens` |
+| GET | `/api/citizens/:id` |
+| GET | `/api/citizens/:id/transactions` |
+| PATCH | `/api/citizens/:id/eco-credit` |
+
+#### `civic-reports.js` — 11 endpoint
+**Mount:** `/api/civic-reports`
+
+| Metodo | Path |
+|--------|------|
+| GET | `/api/civic-reports` |
+| POST | `/api/civic-reports` |
+| GET | `/api/civic-reports/stats` |
+| POST | `/api/civic-reports/fix-comune-ids` |
+| GET | `/api/civic-reports/config` |
+| PUT | `/api/civic-reports/config` |
+| GET | `/api/civic-reports/:id` |
+| PATCH | `/api/civic-reports/:id/status` |
+| PATCH | `/api/civic-reports/:id/assign` |
+| POST | `/api/civic-reports/:id/resolve` |
+| POST | `/api/civic-reports/:id/link-sanction` |
+
+#### `collaboratori.js` — 5 endpoint
+**Mount:** `/api/collaboratori`
+
+| Metodo | Path |
+|--------|------|
+| GET | `/api/collaboratori` |
+| POST | `/api/collaboratori` |
+| PUT | `/api/collaboratori/:id` |
+| DELETE | `/api/collaboratori/:id` |
+| PATCH | `/api/collaboratori/:id/toggle-presenze` |
+
+#### `comuni.js` — 26 endpoint
+**Mount:** `/api/comuni`
+
+| Metodo | Path |
+|--------|------|
+| GET | `/api/comuni` |
+| GET | `/api/comuni/:id` |
+| POST | `/api/comuni` |
+| PUT | `/api/comuni/:id` |
+| DELETE | `/api/comuni/:id` |
+| GET | `/api/comuni/settori/tipi` |
+| GET | `/api/comuni/:id/settori` |
+| POST | `/api/comuni/:id/settori` |
+| PUT | `/api/comuni/settori/:settoreId` |
+| DELETE | `/api/comuni/settori/:settoreId` |
+| GET | `/api/comuni/:id/contratti` |
+| POST | `/api/comuni/:id/contratti` |
+| PUT | `/api/comuni/contratti/:contrattoId` |
+| DELETE | `/api/comuni/contratti/:contrattoId` |
+| GET | `/api/comuni/:id/fatture` |
+| POST | `/api/comuni/:id/fatture` |
+| PUT | `/api/comuni/fatture/:fatturaId` |
+| GET | `/api/comuni/:id/utenti` |
+| POST | `/api/comuni/:id/utenti` |
+| PUT | `/api/comuni/utenti/:assegnazioneId` |
+| DELETE | `/api/comuni/utenti/:assegnazioneId` |
+| GET | `/api/comuni/:id/utenti/stats` |
+| GET | `/api/comuni/:id/mercati` |
+| GET | `/api/comuni/:id/hub` |
+| POST | `/api/comuni/:id/provision-admin` |
+| GET | `/api/comuni/:id/admin-credentials` |
+
+#### `concessions.js` — 8 endpoint
+**Mount:** `/api/concessions`
+
+| Metodo | Path |
+|--------|------|
+| GET | `/api/concessions` |
+| GET | `/api/concessions/:id` |
+| POST | `/api/concessions` |
+| POST | `/api/concessions/full` |
+| PATCH | `/api/concessions/:id` |
+| PUT | `/api/concessions/:id` |
+| DELETE | `/api/concessions/:id` |
+| POST | `/api/concessions/:id/associa-posteggio` |
+
+#### `dms-legacy.js` — 24 endpoint
+**Mount:** `/api/integrations/dms-legacy`
+
+| Metodo | Path |
+|--------|------|
+| GET | `/api/integrations/dms-legacy/health` |
+| GET | `/api/integrations/dms-legacy/status` |
+| GET | `/api/integrations/dms-legacy/markets` |
+| GET | `/api/integrations/dms-legacy/vendors` |
+| GET | `/api/integrations/dms-legacy/concessions` |
+| GET | `/api/integrations/dms-legacy/presences/:marketId` |
+| GET | `/api/integrations/dms-legacy/market-sessions/:marketId` |
+| GET | `/api/integrations/dms-legacy/stalls/:marketId` |
+| GET | `/api/integrations/dms-legacy/spuntisti` |
+| GET | `/api/integrations/dms-legacy/documents` |
+| GET | `/api/integrations/dms-legacy/stats` |
+| POST | `/api/integrations/dms-legacy/sync-out/vendor` |
+| POST | `/api/integrations/dms-legacy/sync-out/market` |
+| POST | `/api/integrations/dms-legacy/sync-out/stall` |
+| POST | `/api/integrations/dms-legacy/sync-out/concession` |
+| POST | `/api/integrations/dms-legacy/sync-out/spuntista` |
+| POST | `/api/integrations/dms-legacy/sync-out/user` |
+| POST | `/api/integrations/dms-legacy/sync-out/wallet` |
+| POST | `/api/integrations/dms-legacy/sync-out/mkt-prezzo` |
+| POST | `/api/integrations/dms-legacy/sync-out/all` |
+| POST | `/api/integrations/dms-legacy/sync-in/presences/:marketId` |
+| POST | `/api/integrations/dms-legacy/sync-in/sessions/:marketId` |
+| POST | `/api/integrations/dms-legacy/sync` |
+| POST | `/api/integrations/dms-legacy/cron-sync` |
+
+#### `dmsHub.js` — 5 endpoint
+**Mount:** `/api/dmsHub`
+
+| Metodo | Path |
+|--------|------|
+| GET | `/api/dmsHub/markets/list` |
+| GET | `/api/dmsHub/markets/getById` |
+| GET | `/api/dmsHub/stalls/listByMarket` |
+| GET | `/api/dmsHub/vendors/list` |
+| GET | `/api/dmsHub/concessions/list` |
+
+#### `documents.js` — 6 endpoint
+**Mount:** `/api/documents`
+
+| Metodo | Path |
+|--------|------|
+| POST | `/api/documents/upload` |
+| GET | `/api/documents` |
+| GET | `/api/documents/:id` |
+| GET | `/api/documents/:id/download` |
+| DELETE | `/api/documents/:id` |
+| POST | `/api/documents/init-schema` |
+
+#### `domande-spunta.js` — 9 endpoint
+**Mount:** `/api/domande-spunta`
+
+| Metodo | Path |
+|--------|------|
+| GET | `/api/domande-spunta` |
+| GET | `/api/domande-spunta/:id` |
+| POST | `/api/domande-spunta` |
+| PUT | `/api/domande-spunta/:id` |
+| DELETE | `/api/domande-spunta/:id` |
+| POST | `/api/domande-spunta/:id/approva` |
+| POST | `/api/domande-spunta/:id/rifiuta` |
+| POST | `/api/domande-spunta/:id/revisione` |
+| GET | `/api/domande-spunta/presenze/:impresa_id/:mercato_id` |
+
+#### `formazione.js` — 17 endpoint
+**Mount:** `/api/formazione`
+
+| Metodo | Path |
+|--------|------|
+| GET | `/api/formazione/enti` |
+| GET | `/api/formazione/enti/:id` |
+| POST | `/api/formazione/enti` |
+| PUT | `/api/formazione/enti/:id` |
+| GET | `/api/formazione/corsi` |
+| GET | `/api/formazione/corsi/:id` |
+| POST | `/api/formazione/corsi` |
+| GET | `/api/formazione/stats` |
+| GET | `/api/formazione/imprese/search` |
+| POST | `/api/formazione/attestati` |
+| GET | `/api/formazione/attestati` |
+| GET | `/api/formazione/iscrizioni` |
+| POST | `/api/formazione/iscrizioni` |
+| PUT | `/api/formazione/iscrizioni/:id` |
+| DELETE | `/api/formazione/iscrizioni/:id` |
+| GET | `/api/formazione/iscrizioni/stats` |
+| GET | `/api/formazione/tipi-attestato` |
+
+#### `gaming-rewards.js` — 32 endpoint
+**Mount:** `/api/gaming-rewards`
+
+| Metodo | Path |
+|--------|------|
+| GET | `/api/gaming-rewards/config` |
+| GET | `/api/gaming-rewards/config/all` |
+| POST | `/api/gaming-rewards/config` |
+| PUT | `/api/gaming-rewards/config` |
+| POST | `/api/gaming-rewards/mobility/start-tracking` |
+| POST | `/api/gaming-rewards/mobility/complete` |
+| POST | `/api/gaming-rewards/mobility/checkin` |
+| GET | `/api/gaming-rewards/mobility/history` |
+| GET | `/api/gaming-rewards/mobility/stats` |
+| GET | `/api/gaming-rewards/mobility/heatmap` |
+| POST | `/api/gaming-rewards/culture/checkin` |
+| GET | `/api/gaming-rewards/culture/history` |
+| GET | `/api/gaming-rewards/culture/stats` |
+| GET | `/api/gaming-rewards/culture/heatmap` |
+| GET | `/api/gaming-rewards/nearby-pois` |
+| GET | `/api/gaming-rewards/top-shops` |
+| GET | `/api/gaming-rewards/trend` |
+| GET | `/api/gaming-rewards/stats` |
+| GET | `/api/gaming-rewards/heatmap` |
+| POST | `/api/gaming-rewards/referral/generate` |
+| GET | `/api/gaming-rewards/referral/validate/:code` |
+| POST | `/api/gaming-rewards/referral/register` |
+| POST | `/api/gaming-rewards/referral/first-purchase` |
+| GET | `/api/gaming-rewards/referral/stats/:user_id` |
+| GET | `/api/gaming-rewards/referral/heatmap` |
+| GET | `/api/gaming-rewards/referral/list` |
+| GET | `/api/gaming-rewards/challenges` |
+| POST | `/api/gaming-rewards/challenges` |
+| PUT | `/api/gaming-rewards/challenges/:id` |
+| DELETE | `/api/gaming-rewards/challenges/:id` |
+| POST | `/api/gaming-rewards/challenges/:id/join` |
+| POST | `/api/gaming-rewards/challenges/:id/progress` |
+
+#### `gis.js` — 4 endpoint
+**Mount:** `/api/gis`
+
+| Metodo | Path |
+|--------|------|
+| GET | `/api/gis/health` |
+| GET | `/api/gis/market-map` |
+| GET | `/api/gis/market-map/:marketId` |
+| POST | `/api/gis/import-market` |
+
+#### `giustificazioni.js` — 7 endpoint
+**Mount:** `/api/giustificazioni`
+
+| Metodo | Path |
+|--------|------|
+| POST | `/api/giustificazioni` |
+| GET | `/api/giustificazioni/file/:id` |
+| GET | `/api/giustificazioni/impresa/:id` |
+| GET | `/api/giustificazioni/pendenti` |
+| GET | `/api/giustificazioni` |
+| PUT | `/api/giustificazioni/:id/review` |
+| DELETE | `/api/giustificazioni/:id` |
+
+#### `gtfs.js` — 6 endpoint
+**Mount:** `/api/gtfs`
+
+| Metodo | Path |
+|--------|------|
+| GET | `/api/gtfs/stops` |
+| GET | `/api/gtfs/stops/nearby` |
+| GET | `/api/gtfs/routes` |
+| GET | `/api/gtfs/stats` |
+| POST | `/api/gtfs/stops/bulk` |
+| POST | `/api/gtfs/routes/bulk` |
+
+#### `guardian.js` — 4 endpoint
+**Mount:** `/api/guardian`
+
+| Metodo | Path |
+|--------|------|
+| POST | `/api/guardian/debug/testEndpoint` |
+| GET | `/api/guardian/health` |
+| GET | `/api/guardian/logs` |
+| GET | `/api/guardian/permissions` |
+
+#### `guardianSync.js` — 1 endpoint
+**Mount:** `/api/mihub`
+
+| Metodo | Path |
+|--------|------|
+| POST | `/api/mihub/sync-blueprint` |
+
+#### `health-monitor.js` — 6 endpoint
+**Mount:** `/api/health`
+
+| Metodo | Path |
+|--------|------|
+| GET | `/api/health` |
+| GET | `/api/health/full` |
+| GET | `/api/health/history` |
+| GET | `/api/health/service/:name` |
+| GET | `/api/health/alerts` |
+| GET | `/api/health/config` |
+
+#### `hub.js` — 10 endpoint
+**Mount:** `/api/hub`
+
+| Metodo | Path |
+|--------|------|
+| GET | `/api/hub/locations` |
+| GET | `/api/hub/locations/:id` |
+| POST | `/api/hub/locations` |
+| PUT | `/api/hub/locations/:id` |
+| DELETE | `/api/hub/locations/:id` |
+| GET | `/api/hub/shops` |
+| POST | `/api/hub/shops` |
+| POST | `/api/hub/shops/create-with-impresa` |
+| GET | `/api/hub/services` |
+| POST | `/api/hub/services` |
+
+#### `imprese.js` — 13 endpoint
+**Mount:** `/api/imprese`
+
+| Metodo | Path |
+|--------|------|
+| GET | `/api/imprese` |
+| GET | `/api/imprese/:id` |
+| POST | `/api/imprese` |
+| PUT | `/api/imprese/:id` |
+| DELETE | `/api/imprese/:id` |
+| GET | `/api/imprese/:id/rating` |
+| PUT | `/api/imprese/:id/vetrina` |
+| POST | `/api/imprese/:id/vetrina/upload` |
+| DELETE | `/api/imprese/:id/vetrina/gallery/:index` |
+| GET | `/api/imprese/:id/qualificazioni` |
+| POST | `/api/imprese/:id/qualificazioni` |
+| PUT | `/api/imprese/:id/qualificazioni/:qualId` |
+| DELETE | `/api/imprese/:id/qualificazioni/:qualId` |
+
+#### `index.js` — 2 endpoint
+**Mount:** `/health`
+
+| Metodo | Path |
+|--------|------|
+| GET | `/health` |
+| GET | `/` |
+
+#### `inspections.js` — 6 endpoint
+**Mount:** `/api/inspections`
+
+| Metodo | Path |
+|--------|------|
+| GET | `/api/inspections` |
+| GET | `/api/inspections/stats` |
+| POST | `/api/inspections` |
+| GET | `/api/inspections/:id` |
+| PUT | `/api/inspections/:id` |
+| DELETE | `/api/inspections/:id` |
+
+#### `integrations.js` — 3 endpoint
+**Mount:** `/api/dashboard/integrations`
+
+| Metodo | Path |
+|--------|------|
+| GET | `/api/dashboard/integrations` |
+| GET | `/api/dashboard/integrations/endpoint-count` |
+| GET | `/api/dashboard/integrations/status` |
+
+#### `ipa.js` — 6 endpoint
+**Mount:** `/api/ipa`
+
+| Metodo | Path |
+|--------|------|
+| GET | `/api/ipa/status` |
+| GET | `/api/ipa/search` |
+| GET | `/api/ipa/ente/:codice_ipa` |
+| POST | `/api/ipa/import` |
+| GET | `/api/ipa/uo/:codice_ipa` |
+| GET | `/api/ipa/tipologie` |
+
+#### `logs.js` — 7 endpoint
+**Mount:** `/api/logs`
+
+| Metodo | Path |
+|--------|------|
+| POST | `/api/logs/recreateSchema` |
+| POST | `/api/logs/initSchema` |
+| POST | `/api/logs/createLog` |
+| GET | `/api/logs/getLogs` |
+| GET | `/api/logs/guardian` |
+| GET | `/api/logs/stats` |
+| DELETE | `/api/logs/clear` |
+
+#### `market-settings.js` — 10 endpoint
+**Mount:** `/api/market-settings`
+
+| Metodo | Path |
+|--------|------|
+| GET | `/api/market-settings/:marketId` |
+| POST | `/api/market-settings/:marketId` |
+| GET | `/api/market-settings/transgressions/list` |
+| GET | `/api/market-settings/transgressions/pending-justifications` |
+| POST | `/api/market-settings/transgressions/:id/justify` |
+| PUT | `/api/market-settings/transgressions/:id/review` |
+| PUT | `/api/market-settings/transgressions/:id/archive` |
+| POST | `/api/market-settings/transgressions/:id/sanction` |
+| GET | `/api/market-settings/transgressions/stats` |
+| POST | `/api/market-settings/cron/run` |
+
+#### `markets.js` — 10 endpoint
+**Mount:** `/api/markets`
+
+| Metodo | Path |
+|--------|------|
+| GET | `/api/markets` |
+| GET | `/api/markets/:id` |
+| GET | `/api/markets/:id/stalls` |
+| POST | `/api/markets` |
+| PATCH | `/api/markets/:id` |
+| DELETE | `/api/markets/:id` |
+| GET | `/api/markets/:marketId/companies` |
+| POST | `/api/markets/:marketId/companies` |
+| GET | `/api/markets/:marketId/concessions` |
+| POST | `/api/markets/:marketId/concessions` |
+
+#### `mercaweb.js` — 9 endpoint
+**Mount:** `/api/integrations/mercaweb`
+
+| Metodo | Path |
+|--------|------|
+| GET | `/api/integrations/mercaweb/health` |
+| GET | `/api/integrations/mercaweb/status` |
+| POST | `/api/integrations/mercaweb/import/ambulanti` |
+| POST | `/api/integrations/mercaweb/import/mercati` |
+| POST | `/api/integrations/mercaweb/import/piazzole` |
+| POST | `/api/integrations/mercaweb/import/concessioni` |
+| POST | `/api/integrations/mercaweb/import/spuntisti` |
+| GET | `/api/integrations/mercaweb/export/presenze/:marketId` |
+| GET | `/api/integrations/mercaweb/export/mapping/:entity` |
+
+#### `migratePDND.js` — 1 endpoint
+**Mount:** `/api/admin`
+
+| Metodo | Path |
+|--------|------|
+| POST | `/api/admin/migrate-pdnd` |
+
+#### `mihub.js` — 7 endpoint
+**Mount:** `/api/mihub`
+
+| Metodo | Path |
+|--------|------|
+| GET | `/api/mihub/tasks` |
+| POST | `/api/mihub/tasks` |
+| POST | `/api/mihub/deploy/vercel` |
+| GET | `/api/mihub/secrets-meta` |
+| POST | `/api/mihub/secrets/:envVar` |
+| GET | `/api/mihub/logs` |
+| GET | `/api/mihub/direct-messages/:conversationId` |
+
+#### `mioAgent.js` — 2 endpoint
+**Mount:** `/api/mio`
+
+| Metodo | Path |
+|--------|------|
+| GET | `/api/mio/agent-logs` |
+| POST | `/api/mio/agent-logs` |
+
+#### `notifiche.js` — 15 endpoint
+**Mount:** `/api/notifiche`
+
+| Metodo | Path |
+|--------|------|
+| POST | `/api/notifiche/send` |
+| GET | `/api/notifiche/impresa/:id` |
+| GET | `/api/notifiche/conversazione/:id` |
+| PUT | `/api/notifiche/leggi/:id` |
+| POST | `/api/notifiche/reply` |
+| GET | `/api/notifiche/stats` |
+| GET | `/api/notifiche/targets` |
+| DELETE | `/api/notifiche/:id` |
+| PUT | `/api/notifiche/archivia/:id` |
+| GET | `/api/notifiche/risposte` |
+| GET | `/api/notifiche/markets` |
+| GET | `/api/notifiche/imprese` |
+| GET | `/api/notifiche/messaggi/:mittente_tipo/:mittente_id` |
+| PUT | `/api/notifiche/segna-letto/:id` |
+| PUT | `/api/notifiche/risposte/:id/letta` |
+
+#### `orchestrator.js` — 9 endpoint
+**Mount:** `/api/mihub`
+
+| Metodo | Path |
+|--------|------|
+| POST | `/api/mihub/orchestrator` |
+| GET | `/api/mihub/orchestrator/conversations` |
+| GET | `/api/mihub/orchestrator/conversations/:id` |
+| POST | `/api/mihub/orchestrator/init` |
+| POST | `/api/mihub/webhook/email` |
+| GET | `/api/mihub/mail/inbox` |
+| GET | `/api/mihub/notifications/sent` |
+| GET | `/api/mihub/notifications/all` |
+| POST | `/api/mihub/notifications/send` |
+
+#### `orchestratorMock.js` — 1 endpoint
+**Mount:** `/api/mihub`
+
+| Metodo | Path |
+|--------|------|
+| POST | `/api/mihub/orchestrator/mock` |
+
+#### `presenze.js` — 34 endpoint
+**Mount:** `/api/presenze`
+
+| Metodo | Path |
+|--------|------|
+| GET | `/api/presenze/mercato/:id` |
+| POST | `/api/presenze/registra` |
+| POST | `/api/presenze/checkout` |
+| GET | `/api/presenze/graduatoria/mercato/:id` |
+| PUT | `/api/presenze/graduatoria/aggiorna` |
+| PUT | `/api/presenze/graduatoria/assenze` |
+| POST | `/api/presenze/graduatoria/ricalcola-posizioni` |
+| POST | `/api/presenze/graduatoria/crea` |
+| POST | `/api/presenze/graduatoria/aggiorna-storico` |
+| GET | `/api/presenze/spuntisti/mercato/:id` |
+| POST | `/api/presenze/registra-uscita` |
+| GET | `/api/presenze/storico/sessioni` |
+| GET | `/api/presenze/storico/dettaglio/:marketId/:data` |
+| POST | `/api/presenze/mercato/:id/chiudi` |
+| GET | `/api/presenze/sessioni/:id/dettaglio` |
+| GET | `/api/presenze/sessioni` |
+| GET | `/api/presenze/impresa/:id` |
+| GET | `/api/mercato/:id` |
+| POST | `/api/registra` |
+| POST | `/api/checkout` |
+| GET | `/api/graduatoria/mercato/:id` |
+| PUT | `/api/graduatoria/aggiorna` |
+| PUT | `/api/graduatoria/assenze` |
+| POST | `/api/graduatoria/ricalcola-posizioni` |
+| POST | `/api/graduatoria/crea` |
+| POST | `/api/graduatoria/aggiorna-storico` |
+| GET | `/api/spuntisti/mercato/:id` |
+| POST | `/api/registra-uscita` |
+| GET | `/api/storico/sessioni` |
+| GET | `/api/storico/dettaglio/:marketId/:data` |
+| POST | `/api/mercato/:id/chiudi` |
+| GET | `/api/sessioni/:id/dettaglio` |
+| GET | `/api/sessioni` |
+| GET | `/api/impresa/:id` |
+
+#### `public-search.js` — 1 endpoint
+**Mount:** `/api/public`
+
+| Metodo | Path |
+|--------|------|
+| GET | `/api/public/search` |
+
+#### `qualificazioni.js` — 7 endpoint
+**Mount:** `/api/qualificazioni`
+
+| Metodo | Path |
+|--------|------|
+| GET | `/api/qualificazioni` |
+| GET | `/api/qualificazioni/impresa/:impresa_id` |
+| GET | `/api/qualificazioni/durc/:impresa_id` |
+| POST | `/api/qualificazioni/durc` |
+| GET | `/api/qualificazioni/suap/:impresa_id` |
+| POST | `/api/qualificazioni/suap` |
+| PUT | `/api/qualificazioni/suap/:id` |
+
+#### `regioni.js` — 5 endpoint
+**Mount:** `/api/regioni`
+
+| Metodo | Path |
+|--------|------|
+| GET | `/api/regioni` |
+| GET | `/api/regioni/:id` |
+| GET | `/api/regioni/:id/province` |
+| GET | `/api/regioni/province/all` |
+| POST | `/api/regioni/migrate` |
+
+#### `routing.js` — 2 endpoint
+**Mount:** `/api/routing`
+
+| Metodo | Path |
+|--------|------|
+| POST | `/api/routing/calculate` |
+| GET | `/api/routing/tpl-stops` |
+
+#### `sanctions.js` — 9 endpoint
+**Mount:** `/api/sanctions`
+
+| Metodo | Path |
+|--------|------|
+| GET | `/api/sanctions` |
+| GET | `/api/sanctions/types` |
+| POST | `/api/sanctions` |
+| GET | `/api/sanctions/riepilogo-pagamenti` |
+| GET | `/api/sanctions/:id` |
+| POST | `/api/sanctions/:id/pay` |
+| PUT | `/api/sanctions/:id` |
+| GET | `/api/sanctions/impresa/:id/da-pagare` |
+| POST | `/api/sanctions/:id/paga-pagopa` |
+
+#### `security.js` — 64 endpoint
+**Mount:** `/api/security`
+
+| Metodo | Path |
+|--------|------|
+| GET | `/api/security/stats` |
+| GET | `/api/security/users` |
+| GET | `/api/security/users/:id` |
+| POST | `/api/security/users` |
+| PUT | `/api/security/users/:id` |
+| DELETE | `/api/security/users/:id` |
+| POST | `/api/security/users/:id/lock` |
+| POST | `/api/security/users/:id/unlock` |
+| POST | `/api/security/users/:id/reset-password` |
+| POST | `/api/security/users/:id/impersonate` |
+| GET | `/api/security/users/:id/roles` |
+| GET | `/api/security/roles` |
+| GET | `/api/security/roles/:id` |
+| POST | `/api/security/roles` |
+| PUT | `/api/security/roles/:id` |
+| DELETE | `/api/security/roles/:id` |
+| POST | `/api/security/roles/:id/assign` |
+| POST | `/api/security/roles/:id/revoke` |
+| GET | `/api/security/roles/:id/permissions` |
+| GET | `/api/security/permissions` |
+| POST | `/api/security/permissions` |
+| POST | `/api/security/permissions/:code/assign` |
+| GET | `/api/security/matrix` |
+| GET | `/api/security/access-logs` |
+| GET | `/api/security/events` |
+| POST | `/api/security/events` |
+| GET | `/api/security/login-attempts` |
+| GET | `/api/security/ip-blacklist` |
+| POST | `/api/security/ip-blacklist` |
+| DELETE | `/api/security/ip-blacklist/:ip` |
+| GET | `/api/security/audit` |
+| GET | `/api/security/audit/stats` |
+| GET | `/api/security/audit/export` |
+| GET | `/api/security/audit/by-entity/:type/:id` |
+| GET | `/api/security/audit/by-user/:email` |
+| GET | `/api/security/audit/gdpr-report/:userId` |
+| GET | `/api/security/audit/:id` |
+| GET | `/api/security/compliance/status` |
+| GET | `/api/security/compliance/certificates` |
+| GET | `/api/security/compliance/report` |
+| GET | `/api/security/compliance/gdpr-requests` |
+| POST | `/api/security/compliance/gdpr-export/:userId` |
+| POST | `/api/security/compliance/gdpr-delete/:userId` |
+| GET | `/api/security/delegations` |
+| GET | `/api/security/delegations/:id` |
+| POST | `/api/security/delegations` |
+| POST | `/api/security/delegations/:id/revoke` |
+| GET | `/api/security/delegations/user/:userId` |
+| GET | `/api/security/threats/dashboard` |
+| GET | `/api/security/threats/alerts` |
+| POST | `/api/security/threats/alerts/:id/acknowledge` |
+| GET | `/api/security/threats/patterns` |
+| GET | `/api/security/threats/report` |
+| POST | `/api/security/threats/scan` |
+| GET | `/api/security/threats/recommendations` |
+| GET | `/api/security/health` |
+| GET | `/api/security/sessions` |
+| GET | `/api/security/sessions/stats` |
+| GET | `/api/security/sessions/:id` |
+| DELETE | `/api/security/sessions/:id` |
+| DELETE | `/api/security/sessions/user/:userId` |
+| PUT | `/api/security/roles/:id/permissions` |
+| GET | `/api/security/permissions/tabs` |
+| GET | `/api/security/permissions/quick-access` |
+
+#### `stalls.js` — 6 endpoint
+**Mount:** `/api/stalls`
+
+| Metodo | Path |
+|--------|------|
+| GET | `/api/stalls` |
+| GET | `/api/stalls/:id` |
+| PATCH | `/api/stalls/:id` |
+| POST | `/api/stalls` |
+| DELETE | `/api/stalls/:id` |
+| GET | `/api/stalls/stats/totals` |
+
+#### `stats-qualificazione.js` — 6 endpoint
+**Mount:** `/api/stats/qualificazione`
+
+| Metodo | Path |
+|--------|------|
+| GET | `/api/stats/qualificazione/overview` |
+| GET | `/api/stats/qualificazione/scadenze` |
+| GET | `/api/stats/qualificazione/demografia` |
+| GET | `/api/stats/qualificazione/top-imprese` |
+| GET | `/api/stats/qualificazione/indici` |
+| GET | `/api/stats/qualificazione/all` |
+
+#### `stats.js` — 4 endpoint
+**Mount:** `/api/stats`
+
+| Metodo | Path |
+|--------|------|
+| GET | `/api/stats/overview` |
+| GET | `/api/stats/realtime` |
+| GET | `/api/stats/inspections` |
+| GET | `/api/stats/growth` |
+
+#### `suap.js` — 20 endpoint
+**Mount:** `/api/suap`
+
+| Metodo | Path |
+|--------|------|
+| GET | `/api/suap/stats` |
+| GET | `/api/suap/pratiche` |
+| GET | `/api/suap/pratiche/:id` |
+| POST | `/api/suap/pratiche` |
+| POST | `/api/suap/pratiche/:id/valuta` |
+| POST | `/api/suap/import` |
+| POST | `/api/suap/pratiche/:id/refresh` |
+| POST | `/api/suap/pratiche/:id/stato` |
+| POST | `/api/suap/pratiche/:id/documenti` |
+| GET | `/api/suap/pratiche/:id/documenti` |
+| GET | `/api/suap/documenti/:docId/download` |
+| GET | `/api/suap/pratiche/:id/eventi` |
+| POST | `/api/suap/pratiche/:id/checks` |
+| GET | `/api/suap/pratiche/:id/checks` |
+| POST | `/api/suap/pratiche/:id/azioni` |
+| GET | `/api/suap/pratiche/:id/azioni` |
+| GET | `/api/suap/regole` |
+| PUT | `/api/suap/regole/:checkCode` |
+| PATCH | `/api/suap/pratiche/:id` |
+| GET | `/api/suap/notifiche-pm` |
+
+#### `system.js` — 2 endpoint
+**Mount:** `/api/system`
+
+| Metodo | Path |
+|--------|------|
+| GET | `/api/system/health` |
+| GET | `/api/system/pm2-status` |
+
+#### `tariffs.js` — 2 endpoint
+**Mount:** `/api/tariffs`
+
+| Metodo | Path |
+|--------|------|
+| GET | `/api/tariffs/:marketId` |
+| POST | `/api/tariffs` |
+
+#### `tcc-v2.js` — 32 endpoint
+**Mount:** `/api/tcc/v2`
+
+| Metodo | Path |
+|--------|------|
+| POST | `/api/tcc/v2/generate-spend-qr` |
+| GET | `/api/tcc/v2/operator/wallet/:operatorId` |
+| POST | `/api/tcc/v2/operator/issue` |
+| POST | `/api/tcc/v2/operator/validate-spend-qr` |
+| POST | `/api/tcc/v2/operator/redeem-spend` |
+| POST | `/api/tcc/v2/operator/settlement` |
+| GET | `/api/tcc/v2/operator/transactions/:operatorId` |
+| PUT | `/api/tcc/v2/config/update` |
+| GET | `/api/tcc/v2/config` |
+| GET | `/api/tcc/v2/fund/stats` |
+| GET | `/api/tcc/v2/fund/transactions` |
+| GET | `/api/tcc/v2/comuni` |
+| GET | `/api/tcc/v2/rules` |
+| POST | `/api/tcc/v2/rules` |
+| PUT | `/api/tcc/v2/rules/:id` |
+| DELETE | `/api/tcc/v2/rules/:id` |
+| GET | `/api/tcc/v2/fund/stats/:hubId` |
+| PUT | `/api/tcc/v2/config/update/:hubId` |
+| GET | `/api/tcc/v2/environment/:hubId` |
+| PUT | `/api/tcc/v2/ets-price` |
+| POST | `/api/tcc/v2/process-batch-reimbursements` |
+| GET | `/api/tcc/v2/pending-reimbursements` |
+| GET | `/api/tcc/v2/reimbursement-history` |
+| GET | `/api/tcc/v2/fund-status` |
+| POST | `/api/tcc/v2/admin/reset-test-data` |
+| GET | `/api/tcc/v2/impresa/:impresaId/wallet` |
+| POST | `/api/tcc/v2/impresa/:impresaId/wallet/create` |
+| GET | `/api/tcc/v2/impresa/:impresaId/qualification-status` |
+| PUT | `/api/tcc/v2/impresa/:impresaId/wallet/status` |
+| GET | `/api/tcc/v2/impresa/:impresaId/wallet/transactions` |
+| POST | `/api/tcc/v2/impresa/:impresaId/wallet/sync-qualification` |
+| GET | `/api/tcc/v2/wallets/all` |
+
+#### `tcc.js` — 15 endpoint
+**Mount:** `/api/tcc`
+
+| Metodo | Path |
+|--------|------|
+| GET | `/api/tcc/wallet/:userId` |
+| GET | `/api/tcc/wallet/:userId/transactions` |
+| POST | `/api/tcc/earn` |
+| POST | `/api/tcc/spend` |
+| GET | `/api/tcc/fund` |
+| GET | `/api/tcc/config` |
+| GET | `/api/tcc/stats` |
+| POST | `/api/tcc/merchant/redeem` |
+| GET | `/api/tcc/qrcode/:userId` |
+| POST | `/api/tcc/scan` |
+| POST | `/api/tcc/validate-qr` |
+| GET | `/api/tcc/merchant/:shopId` |
+| POST | `/api/tcc/merchant/redeem` |
+| GET | `/api/tcc/merchant/:shopId/reimbursements` |
+| GET | `/api/tcc/merchants` |
+
+#### `test-mercato.js` — 10 endpoint
+**Mount:** `/api/test-mercato`
+
+| Metodo | Path |
+|--------|------|
+| POST | `/api/test-mercato/start` |
+| POST | `/api/test-mercato/registra-presenza-concessionario` |
+| POST | `/api/test-mercato/avvia-spunta` |
+| POST | `/api/test-mercato/assegna-posteggio-spunta` |
+| GET | `/api/test-mercato/stato/:market_id` |
+| POST | `/api/test-mercato/chiudi-spunta` |
+| POST | `/api/test-mercato/reset` |
+| POST | `/api/test-mercato/registra-rifiuti` |
+| POST | `/api/test-mercato/chiudi-mercato` |
+| POST | `/api/test-mercato/inizia-mercato` |
+
+#### `vendors.js` — 5 endpoint
+**Mount:** `/api/vendors`
+
+| Metodo | Path |
+|--------|------|
+| GET | `/api/vendors` |
+| GET | `/api/vendors/:id` |
+| POST | `/api/vendors` |
+| PATCH | `/api/vendors/:id` |
+| DELETE | `/api/vendors/:id` |
+
+#### `verbali.js` — 7 endpoint
+**Mount:** `/api/verbali`
+
+| Metodo | Path |
+|--------|------|
+| GET | `/api/verbali/config` |
+| GET | `/api/verbali/infrazioni` |
+| GET | `/api/verbali/impresa/:id` |
+| POST | `/api/verbali` |
+| GET | `/api/verbali/:id` |
+| GET | `/api/verbali/:id/pdf` |
+| POST | `/api/verbali/:id/invia` |
+
+#### `wallet-history.js` — 5 endpoint
+**Mount:** `/api/wallet-history`
+
+| Metodo | Path |
+|--------|------|
+| GET | `/api/wallet-history` |
+| GET | `/api/wallet-history/rimborsi-pendenti` |
+| GET | `/api/wallet-history/:walletId` |
+| GET | `/api/wallet-history/:walletId/balance-history` |
+| POST | `/api/wallet-history` |
+
+#### `wallet-scadenze.js` — 7 endpoint
+**Mount:** `/api/wallet-scadenze`
+
+| Metodo | Path |
+|--------|------|
+| GET | `/api/wallet-scadenze` |
+| GET | `/api/wallet-scadenze/scadute` |
+| GET | `/api/wallet-scadenze/:walletId` |
+| POST | `/api/wallet-scadenze` |
+| POST | `/api/wallet-scadenze/:id/calcola-mora` |
+| POST | `/api/wallet-scadenze/:id/paga` |
+| POST | `/api/wallet-scadenze/aggiorna-ritardi` |
+
+#### `wallets.js` — 8 endpoint
+**Mount:** `/api/wallets`
+
+| Metodo | Path |
+|--------|------|
+| GET | `/api/wallets` |
+| POST | `/api/wallets/calculate-annual-fee` |
+| GET | `/api/wallets/company/:companyId` |
+| GET | `/api/wallets/:id/transactions` |
+| POST | `/api/wallets/deposit` |
+| POST | `/api/wallets/withdraw` |
+| POST | `/api/wallets/init` |
+| DELETE | `/api/wallets/:id` |
+
+#### `watchlist.js` — 6 endpoint
+**Mount:** `/api/watchlist`
+
+| Metodo | Path |
+|--------|------|
+| GET | `/api/watchlist` |
+| GET | `/api/watchlist/stats` |
+| POST | `/api/watchlist` |
+| PUT | `/api/watchlist/:id` |
+| DELETE | `/api/watchlist/:id` |
+| POST | `/api/watchlist/webhook/suap` |
+
+#### `webhook.js` — 3 endpoint
+**Mount:** `/webhook`
+
+| Metodo | Path |
+|--------|------|
+| POST | `/webhook/deploy-mihub` |
+| GET | `/webhook/status` |
+| POST | `/webhook/force-deploy-emergency` |
+
+#### `webhooks.js` — 5 endpoint
+**Mount:** `/api/hooks`
+
+| Metodo | Path |
+|--------|------|
+| POST | `/api/hooks/zapier/new-concession` |
+| POST | `/api/hooks/zapier/stall-status-changed` |
+| GET | `/api/hooks/zapier/test` |
+| POST | `/api/hooks/github/deploy` |
+| GET | `/api/hooks/github/deploy/status` |
+
+#### `workspace.js` — 6 endpoint
+**Mount:** `/api/workspace`
+
+| Metodo | Path |
+|--------|------|
+| POST | `/api/workspace/save` |
+| GET | `/api/workspace/load` |
+| GET | `/api/workspace/list` |
+| DELETE | `/api/workspace/delete` |
+| POST | `/api/workspace/add-shape` |
+| POST | `/api/workspace/add-image` |
 
 ---
 
@@ -495,7 +1593,7 @@ ssh user@157.90.29.66 "pm2 restart mihub-backend"
 
 ### Statistiche
 
-- **Endpoint totali:** 153
+- **Endpoint totali:** 635
 - **Mercati nel DB:** 542
 - **Log totali:** 1232
 - **Agenti attivi:** 5 (MIO, GPT Dev, Manus, Abacus, Zapier)
