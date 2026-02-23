@@ -1,8 +1,8 @@
 # 🏗️ MIO HUB - BLUEPRINT UNIFICATO DEL SISTEMA
 
-> **Versione:** 8.4.0 (Semaforo Rate + Fix Segnalazioni Civiche Admin Globale)  
-> **Data:** 21 Febbraio 2026  
-> **Autore:** Sistema documentato da Manus AI  
+> **Versione:** 8.16.0 (Fix Domande Spunta + Navigazione Pratica da Scheda Associato)  
+> **Data:** 23 Febbraio 2026  
+> **Autore:** Sistema documentato da Manus AI & Claude AI  
 > **Stato:** PRODUZIONE
 
 ---
@@ -50,6 +50,121 @@ Questa tabella traccia la timeline completa di ogni posteggio, registrando ogni 
 ---
 
 ## 📝 CHANGELOG RECENTE
+
+### Sessione 23 Febbraio 2026 (v8.14.0 → v8.15.0)
+
+**Backend (mihub-backend-rest):**
+- ✅ **Fix 5: Notifica Impresa con Posteggio:** Aggiunto il numero del posteggio (`Post. N`) nel messaggio di notifica all'impresa quando viene rilasciata/rinnovata una concessione. Il messaggio ora è più chiaro (es. "Il subingresso per il Post. 7 nel Mercato Grosseto è stato completato").
+
+**Frontend (dms-hub-app-new):**
+- ✅ **Fix 1: Banner Esito Positivo SCIA:** Aggiunto banner verde "Pratica SCIA Espletata con Esito Positivo" nella vista dettaglio pratica quando lo stato è `APPROVED`, con riepilogo della concessione generata.
+- ✅ **Fix 2: Dashboard Associazione - Pratiche Pendenti:** Il riquadro "Pratiche Pendenti" nella dashboard associazione ora include anche le pratiche con stato `INTEGRATION_NEEDED`, che richiedono un'azione da parte dell'associazione.
+- ✅ **Fix 3: Semaforo Colori Scheda Associato:** I badge stato delle pratiche SCIA nella scheda associato ora usano i colori corretti: verde (APPROVED), rosso (REJECTED), arancione (INTEGRATION_NEEDED), blu (IN_LAVORAZIONE).
+- ✅ **Fix 4: Click Pratica/Concessione apre Documento:** Nella scheda associato, cliccando su una pratica SCIA si apre il dettaglio nel SuapPanel, e cliccando su una concessione si apre il documento PDF della concessione.
+- ✅ **Fix 6: Nomi Check Banner Regolarizzazione:** Corretto il bug per cui i controlli da regolarizzare nel banner arancione apparivano senza nome. Ora vengono mostrati correttamente il codice del check e il motivo del fallimento (es. "CHECK_CANONE_UNICO: Wallet in rosso").
+- ✅ **Fix 7: Tab Modifica Scheda Associato:** Aggiunto bottone "Modifica" (icona matita) nella scheda associato. Cliccandolo, i campi (N. Tessera, Scadenza, Importi, etc.) diventano editabili e appare un bottone "Salva" per persistere le modifiche.
+
+
+### Sessione 22 Febbraio 2026 — Notte (v8.13.0 → v8.14.0)
+
+**Database:**
+- ✅ **10 Colonne Delegato SCIA nella tabella `associazioni`:** `delegato_nome`, `delegato_cognome`, `delegato_codice_fiscale`, `delegato_data_nascita`, `delegato_luogo_nascita`, `delegato_qualifica`, `delegato_residenza_via`, `delegato_residenza_comune`, `delegato_residenza_cap`, `delegato_pec`.
+
+**Backend (mihub-backend-rest):**
+- ✅ **POST/PUT `/api/associazioni`:** Aggiornati per leggere/scrivere i 10 campi delegato.
+- ✅ **GET `/api/associazioni/:id`:** Restituisce i campi delegato nel JSON di risposta.
+
+**Frontend (dms-hub-app-new):**
+- ✅ **Sezione DELEGATO SCIA nel form Modifica Associazione:** Nuova sezione nel dialog `AssociazioniPanel.tsx` con 10 campi: Nome Delegato, Cognome Delegato, Codice Fiscale Delegato, Data di Nascita, Luogo di Nascita, Qualifica/Titolo, Residenza (Via/Piazza), Comune, CAP, PEC Delegato.
+- ✅ **Auto-compilazione SciaForm:** Aggiornato il mapping in `SciaForm.tsx` (riga ~834) per usare i nuovi nomi colonne: `delegato_nome/cognome/codice_fiscale/data_nascita/luogo_nascita/qualifica/residenza_via/residenza_comune/residenza_cap/pec` al posto dei vecchi nomi inesistenti.
+
+**Flusso Auto-compilazione Delegato:**
+1. Admin compila i campi DELEGATO SCIA nella scheda associazione (tab Associazioni → modifica)
+2. Quando si impersonifica l'associazione e si compila una SCIA, i dati del delegato vengono auto-compilati dalla scheda associazione
+3. I campi mappati sono: nome, cognome, CF, data nascita, luogo nascita, qualifica, residenza, comune, CAP, PEC
+
+### Sessione 22 Febbraio 2026 — Sera (v8.12.0 → v8.13.0)
+
+**Backend (mihub-backend-rest) — 9 commit:**
+- ✅ **Endpoint Scheda Associato:** Nuovo `GET /api/associazioni/:id/tesseramenti/:tid/scheda` — restituisce dettaglio completo: dati impresa, dati tessera (scadenza, stato pagamento), tipo impresa (ambulante/negozio_fisso basato su `descrizione_ateco`), pratiche SCIA collegate, concessioni collegate.
+- ✅ **Fix Type Mismatch Concessions:** Cast `scia_id::uuid` nella query concessions per filtro `associazione_id` (colonna `scia_id` è `text`, `suap_pratiche.id` è `uuid`).
+- ✅ **Fix Type Mismatch Domande-Spunta:** Rimosso riferimento a colonna inesistente `concession_id`, usato JOIN tramite `impresa_id` via `tesseramenti_associazione`.
+- ✅ **Fix Colonna `associazione_id` su `suap_pratiche`:** Migrazione diretta con `ALTER TABLE ADD COLUMN IF NOT EXISTS` + filtro diretto senza subquery.
+- ✅ **Pulizia DB:** Rimosso `associazione_id` da 6 pratiche di test vecchie per partire puliti.
+- ✅ **Permessi Ruolo ASSOCIATION (ID=10):** Aggiunti e poi RIMOSSI `tab.view.ssosuap` e `tab.view.tpas` — questi tab NON devono essere visibili per le associazioni (il SuapPanel è già dentro Enti & Associazioni).
+
+**Frontend (dms-hub-app-new) — 4 commit:**
+- ✅ **Tab Associati (4° sotto-tab):** Aggiunto come sotto-tab esterno in Enti & Associazioni: `Enti Formatori | Associazioni & Bandi | SCIA & Pratiche | Associati`. Visibile solo in impersonazione associazione. Monta `PresenzeAssociatiPanel`.
+- ✅ **Icona Occhio Scheda Associato:** Ogni tesserato nella lista ha icona Eye che apre dialog fullscreen con: badge tipo impresa (Ambulante/Negozio Fisso), badge stato tessera, dati impresa completi, dati tessera (scadenza, stato pagamento, importi), pratiche SCIA collegate, concessioni collegate.
+- ✅ **Fix Domande Spunta Filtro:** Aggiunto `addAssociazioneIdToUrl` in `ListaDomandeSpuntaSuap.tsx` — prima mostrava tutte le domande spunta senza filtro.
+- ✅ **Revert mode SuapPanel:** Il `SuapPanel` nel tab SSO SUAP resta senza `mode` — il SuapPanel `mode='associazione'` è già correttamente in Enti & Associazioni → SCIA & Pratiche.
+
+**Lezione Appresa:**
+- Il tab SSO SUAP e il tab Associazioni (TPAS) NON devono essere visibili per le associazioni. La sezione SUAP per le associazioni è già dentro il tab "Enti & Associazioni" → sotto-tab "SCIA & Pratiche".
+- Il tab Associazioni (TPAS) è la sezione admin per gestire TUTTE le associazioni, non per la vista impersonata.
+
+### Sessione 22 Febbraio 2026 (v8.11.3 → v8.12.0)
+- ✅ **Impersonificazione Associazioni COMPLETA:** Quando si impersonifica un'associazione, tutti i tab (Dashboard, Gaming, Civic, Imprese, Gestione HUB, SUAP) mostrano solo i dati pertinenti all'associazione, partendo da zero se non ci sono dati.
+- ✅ **Nuovi Pannelli `TesseratiAssociazionePanel` e `AnagraficaAssociazionePanel`:** Creati per gestire la lista dei tesserati (imprese che pagano la quota associativa) e i dati anagrafici dell'associazione.
+- ✅ **Backend Tesseramenti:** Creata tabella `tesseramenti_associazione` (17 colonne) e 5 endpoint CRUD (`GET/POST/PUT/DELETE /api/associazioni/:id/tesseramenti`).
+- ✅ **Fix Concetto Presenze:** Corretto l'errore concettuale: le "presenze" per un'associazione sono i "tesseramenti" (imprese che pagano la quota), non le presenze ai mercati (vendor_presences).
+- ✅ **Filtro Imprese per Associazione:** `routes/imprese.js` ora supporta `?associazione_id=X` cercando in `tesseramenti_associazione` UNION `richieste_servizi`.
+- ✅ **Guard nei 6 Pannelli:** DashboardPA (overview+imprese), GamingRewardsPanel, CivicReportsPanel, ImpreseQualificazioniPanel, SuapPanel, GestioneHubPanel ora filtrano per associazione quando impersonificata.
+- ✅ **Fix Sicurezza CRITICI:** Rimosso `eval()` in MessageContent.tsx, fixato XSS innerHTML in DashboardPA.tsx, rimossa Firebase API Key hardcoded.
+- ✅ **Fix Codice Morto DashboardPA:** Rimosse righe 1278-1314 con `setSciaPraticheList`, `setSciaPraticheStats`, `setSciaAssociatiList` non dichiarati.
+- ✅ **Helper useImpersonation:** Aggiunti `addAssociazioneIdToUrl()` e `isAssociazioneImpersonation()` per uso nei pannelli.
+- ✅ **Merge Modifiche Claude:** Integrate tutte le implementazioni preparate da Claude (5 commit, 16 file, 2034 righe).
+
+### Sessione 22 Febbraio 2026 (v8.9.1 → v8.11.3)
+- ✅ **Pannello Gestione Associazioni (`AssociazioniPanel.tsx`):** Creato componente completo per CRUD associazioni con lista, form, sotto-tab (Enti Formatori, Associazioni & Bandi, SCIA & Pratiche).
+- ✅ **Backend Associazioni:** Creati 16 endpoint API in `routes/associazioni.js` per la gestione delle associazioni.
+- ✅ **Tab TPAS rinominato "Associazioni":** Il vecchio tab TPAS nella DashboardPA ora monta `<AssociazioniPanel />`.
+- ✅ **Impersonificazione Associazioni (Fase 1):** `useImpersonation.ts` esteso con `associazioneId`, `entityType`. `ImpersonationBanner.tsx` riscritto per gestire entità generica. `PermissionsContext.tsx` con ruolo `ASSOCIATION` (ID=10).
+- ✅ **Bottone Concessione nascosto:** In `SuapPanel.tsx`, il bottone "Concessione" e i tab Autorizzazioni/Storico sono nascosti quando `mode='associazione'`.
+
+### Sessione 21 Febbraio 2026 (v8.9.0 → v8.9.1)
+- ✅ **Nota Score Pesato:** Aggiunta nota esplicativa sotto il cerchio score nel dettaglio pratica: "Score pesato: ogni controllo ha un peso diverso (4-15 pt)". Lo score 55 con 10/14 PASS è corretto perché i 4 check falliti pesano 45 punti (CHECK_CANONE_UNICO=10, CHECK_ANTIMAFIA_CED=10, CHECK_ONORABILITA_CED=10, CHECK_DATI_COMPLETI=15).
+- ✅ **Pre-compilazione SCIA Precedente:** Quando si seleziona un posteggio nel form SCIA, il sistema cerca automaticamente la SCIA più recente (APPROVED/EVALUATED) per quel posteggio e pre-compila i campi `scia_precedente_protocollo`, `scia_precedente_data` e `scia_precedente_comune`.
+- ✅ **Nuovo filtro backend `posteggio_id`:** Aggiunto supporto per `?posteggio_id=X` nell'endpoint `GET /api/suap/pratiche` (route + service). Permette di cercare pratiche SCIA associate a un posteggio specifico.
+
+### Sessione 21 Febbraio 2026 (v8.8.0 → v8.9.0)
+- ✅ **Fix Stato APPROVED dopo Concessione:** Il callback `onSubmit` di ConcessioneForm ora cattura `selectedPratica` in variabile locale PRIMA del reset degli stati React, evitando che `selectedPratica` sia null al momento della chiamata API. Aggiunto fallback: anche senza `savedConcessione.id`, aggiorna lo stato a APPROVED.
+- ✅ **Fix Numero Concessione:** Il `preData` passato da "Genera Concessione" non include più `numero_protocollo` della SCIA. Il ConcessioneForm genera automaticamente il numero progressivo (#N+1) tramite il suo useEffect interno.
+- ✅ **Form SCIA Full-Width:** Il modal SCIA è stato allargato da `max-w-4xl` (896px) con overlay nero a pagina intera (`fixed inset-0 bg-[#0b1220]`), identico al layout del form Concessione.
+- ✅ **Fix Default Durata 10 Anni:** Dopo lo spread di `initialData`, il campo `durata_anni` viene forzato a `'10'` se vuoto o undefined, evitando che il Select resti senza valore selezionato.
+- ✅ **Autocomplete Imprese Ottimizzato:** Endpoint leggero con `?fields=...` (escluse immagini base64 e subquery aggregate: da 26MB a pochi KB). Filtro migliorato: minimo 2 caratteri, priorità denominazione, CF/P.IVA solo con 3+ caratteri. Limite aumentato da 15 a 25 risultati. Applicato sia a SciaForm che a ConcessioneForm.
+- ✅ **Fix Score Coerente:** Il dettaglio pratica ora usa `selectedPratica.score` dal DB (calcolato con pesi reali dal backend) invece di ricalcolare `passedChecks/totalChecks*100`. Lo score nella lista e nel dettaglio ora coincidono.
+- ✅ **Fix Dati Impresa Bio Market Italia:** Corretti `indirizzo_provincia` da "GR" a "RE" e `indirizzo_cap` da "58100" a "42121" nel DB (sede legale era Reggio Emilia con dati Grosseto).
+
+### Sessione 21 Febbraio 2026 (v8.7.0 → v8.8.0)
+- ✅ **Fix Market Dropdown SciaForm:** Aggiunta dipendenza `comuneId` nell'useEffect di SciaForm per ricaricare i mercati quando cambia il comune impersonato. Il filtro `?comune_id=X` era già implementato ma non si riattivava al cambio comune.
+- ✅ **Auto-APPROVED dopo Concessione:** Quando viene generata una concessione da ConcessioneForm, la pratica SCIA collegata viene automaticamente aggiornata a stato `APPROVED` tramite `POST /api/suap/pratiche/:id/stato`. Aggiunta funzione `updateSuapPraticaStato()` nel client API frontend.
+- ✅ **Fix Type Mismatch Backend:** Corretto errore `operator does not exist: character varying = integer` nel JOIN tra `suap_pratiche.mercato_id` (varchar) e `markets.id` (integer) nella funzione `updatePraticaStato`. Fix: cast a `::text` su entrambi i lati.
+- ✅ **Data Cleanup Pratiche Modena:** Corretti 12 pratiche Modena che avevano `mercato_id=1` (Grosseto) invece di `mercato_id=5` (Mercato Novi Sad Modena). Corretta anche 1 pratica con `mercato_id='Mercato Grosseto'` (stringa invece di numero). Totale 17 pratiche ora con dati coerenti.
+- ✅ **Stato Pratiche:** 4 pratiche Grosseto (mercato_id=1) + 13 pratiche Modena (mercato_id=5). Stati: 6 APPROVED, 10 EVALUATED, 1 RECEIVED.
+
+### Sessione 21 Febbraio 2026 (v8.6.0 → v8.7.0)
+- ✅ **Inventario Completo Database Neon:** Censimento di tutte le 152 tabelle del database con colonne, records e descrizione. Organizzato per categorie: Core, SUAP/SCIA, Qualificazione, Segnalazioni, Mobilità, Gaming, Utenti, Notifiche, Agente AI, Storico, Geografiche, HUB. Nessuna tabella duplicata trovata.
+- ✅ **Pulizia Pratiche Test:** Eliminate 12 pratiche SCIA vuote/test dal DB (2025/001-003, TESTBROWSERDIR, TESTBODY, TESTCF, TESTDEL, NON_SPECIFICATO, VERDI, ecc.) con relativi 34 checks, 13 eventi e 3 decisioni. Restano 17 pratiche pulite con dati completi.
+- ✅ **Fix Admin Globale SUAP:** Il SuapPanel non caricava dati senza impersonalizzazione (comuneData=null bloccava loadData). Introdotto flag `comuneDataLoaded` per distinguere "non ancora caricato" da "admin globale senza filtro". Ora l'admin vede tutte le pratiche di tutti i comuni.
+- ✅ **Fix Notifiche SUAP:** Rimosso ultimo fallback `comuneData?.id || 1` → `comuneData?.id || 0` per le notifiche.
+
+### Sessione 21 Febbraio 2026 (v8.5.0 → v8.6.0)
+- **SUAP Engine v2.1**: DELETE vecchi check v1.0 prima di ri-valutare (fix ON CONFLICT DO NOTHING)
+- **CHECK_DATI_COMPLETI** promosso da SOFT a HARD (peso 15), campi obbligatori estesi: sub_cf, mercato_id, posteggio_id, ced_cf per subingresso
+- **SciaForm validazione**: blocca submit senza subentrante CF, mercato, posteggio, cedente (per subingresso)
+- **Analisi 29 pratiche SCIA**: 12 con dati vuoti (test), 17 complete. Pratiche vuote non possono più ottenere APPROVED
+
+### Sessione 21 Febbraio 2026 (v8.4.0 → v8.5.0)
+- ✅ **Rimozione Completa Hardcoded Grosseto/comune_id=1:** Censimento e correzione di TUTTI i riferimenti hardcoded a Grosseto e `comune_id = 1` in 7 file backend e 6 file frontend. Il sistema è ora completamente dinamico per comune impersonalizzato.
+- ✅ **Fix Aggiorna-Mora Dinamico:** L'endpoint `POST /api/canone-unico/aggiorna-mora` era hardcoded a `comune_id = 1`. Ora accetta `comune_id` come parametro opzionale: se specificato aggiorna solo quel comune, altrimenti aggiorna TUTTI i comuni. Questo risolveva il problema delle rate di Modena che restavano `NON_PAGATO` nel DB anche se scadute.
+- ✅ **Fix Semaforo-Rate Recupero Comune:** L'endpoint `semaforo-rate` ora recupera il `comune_id` dal wallet tramite il mercato, invece di usare un fallback hardcoded.
+- ✅ **Fix Config Verbali Dinamica:** L'endpoint `GET /api/verbali/config` ora accetta `comune_id` e restituisce nome comune e corpo PM dinamicamente dal DB, invece di dati statici Grosseto.
+- ✅ **Fix TCC Rules/Dashboard/Config:** Rimossi fallback `comune_id = 1` da `GET /api/tcc/v2/rules` (ora richiede `comune_id` obbligatorio), dashboard e config TCC.
+- ✅ **Fix Frontend Notifiche:** `SuapPanel`, `WalletPanel`, `ControlliSanzioniPanel` ora mostrano il nome del comune impersonalizzato nei NotificationManager, non più "Grosseto" hardcoded.
+- ✅ **Verifica Flusso SCIA End-to-End:** Analizzato il percorso completo `SciaForm → SuapPanel.handleSubmitScia → API /api/suap/pratiche → suapService.createPratica → DB`. Il mapping dei campi sub_*/ced_* è corretto e completo.
+- ✅ **File backend modificati:** `canone-unico.js`, `concessions.js`, `autorizzazioni.js`, `domande-spunta.js`, `sanctions.js`, `tcc-v2.js`, `verbali.js`.
+- ✅ **File frontend modificati:** `SuapPanel.tsx`, `GamingRewardsPanel.tsx`, `AnagraficaPage.tsx`, `ControlliSanzioniPanel.tsx`, `WalletPanel.tsx`, `GestioneHubNegozi.tsx`.
 
 ### Sessione 21 Febbraio 2026 (v8.3.0 → v8.4.0)
 - ✅ **Semaforo Rate con Badge Colorati:** Riscritto il sistema di visualizzazione rate nelle schede impresa della sezione "Lista Imprese per Mercato" (tab Canone). Ora mostra badge colorati: **rosso** per rate in mora (scadute e non pagate), **giallo** per rate da pagare (non ancora scadute), **verde** per rate già pagate. Prima mostrava solo un conteggio generico "scadenze non pagate" che escludeva le rate IN_MORA.
@@ -765,21 +880,146 @@ POST /api/guardian/debug/testEndpoint
 
 **Connection String:** Vedi variabile `DATABASE_URL` o `NEON_POSTGRES_URL`
 
-### Tabelle Principali (Dati Reali - 2 Gennaio 2026)
+### Inventario Completo Tabelle (Aggiornato 21 Febbraio 2026)
 
-| Tabella | Descrizione | Records |
-|---------|-------------|-----------------||
-| `markets` | Mercati | **2** |
-| `stalls` | Posteggi | **564** |
-| `imprese` | Imprese | **13** |
-| `vendors` | Operatori | **11** |
-| `concessions` | Concessioni | **34** |
-| `agent_messages` | Chat agenti | ~500 |
-| `mio_agent_logs` | Log API | ~1500 |
-| `suap_pratiche` | Pratiche SUAP | **9** |
-| `suap_eventi` | Eventi SUAP | variabile |
+**Totale tabelle nel database:** 152
 
-**Totale tabelle nel database:** 81
+#### Tabelle Core (Dati Operativi)
+
+| Tabella | Colonne | Records | Descrizione |
+|---------|---------|---------|-------------|
+| `markets` | 18 | 6 | Mercati comunali |
+| `stalls` | 28 | 583 | Posteggi nei mercati |
+| `imprese` | 18 | 20 | Anagrafica imprese |
+| `vendors` | 14 | 15 | Operatori ambulanti |
+| `concessions` | 30 | 83 | Concessioni posteggio |
+| `wallets` | 10 | 90 | Wallet PagoPA |
+| `wallet_scadenze` | 21 | 77 | Scadenze canone unico |
+| `wallet_history` | 13 | 135 | Storico eventi wallet |
+| `wallet_transactions` | 8 | 1344 | Transazioni wallet |
+| `transactions` | 10 | 116 | Transazioni generali |
+| `comuni` | 16 | 34 | Anagrafica comuni |
+| `settori_comune` | 24 | 94 | Settori merceologici per comune |
+
+#### Tabelle SUAP/SCIA
+
+| Tabella | Colonne | Records | Descrizione |
+|---------|---------|---------|-------------|
+| `suap_pratiche` | 73 | 17 | Pratiche SCIA (dopo pulizia test) |
+| `suap_checks` | 7 | 226 | Check valutazione automatica |
+| `suap_eventi` | 8 | 38 | Eventi pratica |
+| `suap_decisioni` | 8 | 22 | Decisioni pratica |
+| `suap_documenti` | 7 | 0 | Documenti allegati |
+| `suap_azioni` | 9 | 0 | Azioni pratica |
+| `suap_regole` | 8 | 0 | Regole valutazione |
+| `dms_suap_instances` | 25 | 1 | Istanze SUAP |
+
+#### Tabelle Qualificazione e Compliance
+
+| Tabella | Colonne | Records | Descrizione |
+|---------|---------|---------|-------------|
+| `qualification_types` | 12 | 10 | Tipi qualificazione |
+| `qualificazioni` | 12 | 50 | Qualificazioni imprese |
+| `regolarita_imprese` | 12 | 20 | Regolarità DURC/Antimafia |
+| `autorizzazioni` | 22 | 50 | Autorizzazioni PM |
+| `domande_spunta` | 30 | 35 | Domande spunta giornaliere |
+| `sanctions` | 33 | 39 | Sanzioni |
+
+#### Tabelle Segnalazioni e IoT
+
+| Tabella | Colonne | Records | Descrizione |
+|---------|---------|---------|-------------|
+| `civic_reports` | 22 | 44 | Segnalazioni civiche |
+| `civic_report_config` | 10 | 2 | Config segnalazioni per comune |
+| `civic_report_categories` | 8 | 14 | Categorie segnalazioni |
+| `civic_report_comments` | 8 | 0 | Commenti segnalazioni |
+| `civic_report_photos` | 7 | 0 | Foto segnalazioni |
+
+#### Tabelle Mobilità e Sostenibilità
+
+| Tabella | Colonne | Records | Descrizione |
+|---------|---------|---------|-------------|
+| `mobility_data` | 14 | 9554 | Dati mobilità |
+| `gtfs_stops` | 14 | 3117 | Fermate GTFS |
+| `cultural_pois` | 24 | 1277 | Punti di interesse culturali |
+| `route_completions` | 20 | 1 | Percorsi completati |
+
+#### Tabelle Gaming & Rewards (TCC)
+
+| Tabella | Colonne | Records | Descrizione |
+|---------|---------|---------|-------------|
+| `operator_daily_wallet` | 14 | 26 | Wallet giornaliero operatori |
+| `operator_transactions` | 12 | 26 | Transazioni operatori |
+| `spend_qr_tokens` | 10 | 52 | Token QR spesa |
+| `qr_tokens` | 5 | 5 | Token QR |
+| `challenges` | 15 | 3 | Sfide gamification |
+| `challenge_participations` | 10 | 0 | Partecipazioni sfide |
+| `referrals` | 12 | 4 | Referral |
+
+#### Tabelle Utenti e Sicurezza
+
+| Tabella | Colonne | Records | Descrizione |
+|---------|---------|---------|-------------|
+| `users` | 19 | 9 | Utenti sistema |
+| `user_roles` | 11 | 14 | Ruoli utente |
+| `user_role_assignments` | 10 | 6 | Assegnazioni ruoli |
+| `user_sessions` | 14 | 66 | Sessioni utente |
+| `permissions` | 10 | 102 | Permessi |
+| `role_permissions` | 7 | 285 | Permessi per ruolo |
+| `security_events` | 14 | 859 | Eventi sicurezza |
+| `secure_credentials` | 8 | 9 | Credenziali sicure |
+| `secrets` | 3 | 5 | Segreti |
+| `secrets_meta` | 9 | 10 | Metadati segreti |
+
+#### Tabelle Notifiche e Comunicazione
+
+| Tabella | Colonne | Records | Descrizione |
+|---------|---------|---------|-------------|
+| `notifiche` | 19 | 401 | Notifiche sistema |
+| `notifiche_destinatari` | 6 | 948 | Destinatari notifiche |
+| `wallet_notifications` | 11 | 4 | Notifiche wallet |
+| `chat_messages` | 14 | 23 | Messaggi chat |
+
+#### Tabelle Agente AI
+
+| Tabella | Colonne | Records | Descrizione |
+|---------|---------|---------|-------------|
+| `agent_messages` | 9 | 466 | Messaggi agente |
+| `mio_agent_logs` | 12 | 1627 | Log API agente |
+| `agent_conversations` | 10 | 32 | Conversazioni agente |
+
+#### Tabelle Storico e Audit
+
+| Tabella | Colonne | Records | Descrizione |
+|---------|---------|---------|-------------|
+| `storico_titolarita_posteggio` | 34 | 4 | Storico titolarità posteggi |
+| `vendor_presences` | 23 | 48 | Presenze operatori |
+| `pm_watchlist` | 12 | 63 | Watchlist PM |
+| `audit_trail` | 12 | 13 | Trail audit |
+
+#### Tabelle Geografiche
+
+| Tabella | Colonne | Records | Descrizione |
+|---------|---------|---------|-------------|
+| `regioni` | 8 | 20 | Regioni italiane |
+| `province` | 9 | 107 | Province italiane |
+
+#### Tabelle HUB/Negozi
+
+| Tabella | Colonne | Records | Descrizione |
+|---------|---------|---------|-------------|
+| `hub_shops` | 14 | 3 | Negozi HUB |
+| `shops` | 9 | 3 | Negozi |
+| `servizi_associazioni` | 14 | 24 | Servizi associazioni |
+| `richieste_servizi` | 17 | 10 | Richieste servizi |
+
+#### Tabelle Vuote/Non Utilizzate (39 tabelle con 0 records)
+
+Includono: `agent_brain`, `agent_context`, `agent_projects`, `agent_tasks`, `api_keys`, `audit_logs`, `bookings`, `business_analytics`, `carbon_footprint`, `compliance_certificates`, `comune_contratti`, `comune_fatture`, `concession_payments`, `notifications`, `product_tracking`, `products`, `reimbursements`, `sustainability_metrics`, `system_events`, `system_logs`, `tcc_daily_limits`, `tcc_fraud_events`, `tcc_idempotency_keys`, `tcc_qr_tokens`, `tcc_rate_limits`, `tcc_rewards_config`, `user_analytics`, `vendor_documents`, `violations`, `wallet_balance_snapshots`, `webhook_logs`, `webhooks`, `zapier_webhook_logs`, `security_delegations`, e altre.
+
+#### Tabelle Backup (5 tabelle)
+
+`agent_logs_backup_20251204_174125`, `agent_messages_backup_20251204_174125`, `carbon_credits_config_backup_20260203`, `carbon_credits_rules_backup_20260203`, `civic_config_backup_20260203`
 
 ### Storage S3
 
@@ -8513,3 +8753,253 @@ Verifica completa di tutti i sistemi dopo il completamento dei fix e dei test bi
 | 10 | **lastSync nel health sempre "never"** | Il sistema non traccia l'ultimo sync effettuato | Implementare tracking dell'ultimo sync riuscito |
 
 > **Stato complessivo: il sistema è stabile e funzionante.** Tutti i canali di interoperabilità sono attivi e testati bidirezionalmente. I problemi rimanenti sono cosmetici o miglioramenti futuri, nessuno è bloccante.
+
+
+---
+
+## 🏢 GESTIONE ASSOCIAZIONI E IMPERSONIFICAZIONE (v8.12.0)
+
+### Obiettivo
+
+Permettere a un admin PA di gestire le **Associazioni di Categoria** e di impersonificarle per vedere la dashboard esattamente come la vedrebbe l'associazione, con dati isolati e tab pertinenti. Le associazioni rappresentano enti come Confcommercio, Confesercenti, CNA, etc. che raggruppano imprese tesserate.
+
+### Architettura Impersonificazione "Entità-centrica"
+
+Il sistema di impersonificazione è stato esteso da "Comune-centrico" a "Entità-centrico", in grado di gestire sia Comuni che Associazioni senza rompere il flusso esistente.
+
+| Componente | File | Modifica |
+|---|---|---|
+| **Hook Impersonificazione** | `useImpersonation.ts` | Aggiunto `entityType` ('comune' o 'associazione'), `associazioneId`, `associazioneNome`. Helper `isAssociazioneImpersonation()` e `addAssociazioneIdToUrl()`. `addComuneIdToUrl()` **NON toccato**. |
+| **Barra Gialla** | `ImpersonationBanner.tsx` | Mostra icona Building2/Briefcase e label COMUNE/ASSOCIAZIONE in base a `entityType`. |
+| **Permessi** | `PermissionsContext.tsx` | `determineUserRoleId`: se `entityType === 'associazione'` → ruolo `ASSOCIATION` (ID=10, 26 permessi, 13 tab). Se `entityType === 'comune'` → ruolo ID=2 come prima. |
+| **Tab Protetti** | `ProtectedTab.tsx` | **NON modificato** — funziona già con qualsiasi ruolo. |
+
+### URL Impersonificazione
+
+```
+/dashboard-pa?associazione_id=X&associazione_nome=Y&impersonate=true&role=associazione
+```
+
+### Tab Visibili per Ruolo Associazione (ID=10)
+
+| # | Tab ID | Componente | Stato Dati |
+|---|---|---|---|
+| 1 | dashboard | DashboardPA (overview) | Guard: stats a zero se associazione |
+| 2 | gaming | GamingRewardsPanel | Guard: dati vuoti se associazione |
+| 3 | sustainability | SustainabilityPanel | Nessun guard (dati globali) |
+| 4 | realtime | RealtimePanel | Nessun guard (dati globali) |
+| 5 | ai | AgentPanel | Nessun guard (agente globale) |
+| 6 | civic | CivicReportsPanel | Guard: segnalazioni filtrate per associazione |
+| 7 | businesses | ImpreseQualificazioniPanel | Guard: imprese filtrate per `?associazione_id=X` |
+| 8 | imprese | DashboardPA (imprese) | Guard: imprese filtrate per associazione |
+| 9 | mobility | MobilityPanel | Nessun guard (dati globali) |
+| 10 | tpas | AssociazioniPanel | Pannello gestione associazioni |
+| 11 | workspace | WorkspacePanel | Nessun guard (workspace globale) |
+| 12 | docs | DocsPanel | Nessun guard (documenti globali) |
+| 13 | anagrafica | AnagraficaAssociazionePanel | Dati anagrafici dell'associazione impersonificata |
+
+### Pannello Gestione Associazioni (`AssociazioniPanel.tsx`)
+
+Componente completo per la gestione CRUD delle associazioni di categoria, montato nel tab "Associazioni" (ex TPAS).
+
+**Funzionalità:**
+- Lista associazioni con ricerca e paginazione
+- Form creazione/modifica associazione con sezioni: Anagrafica, Presidente, Referente Operativo, **DELEGATO SCIA** (10 campi), Altro
+- Bottone "Accedi come" per impersonificare
+- Sotto-tab: Enti Formatori, Associazioni & Bandi, SCIA & Pratiche, **Associati** (visibile solo in impersonazione associazione)
+
+### Pannello Tesserati (`PresenzeAssociatiPanel.tsx`)
+
+Gestisce la lista delle imprese tesserate all'associazione (quelle che pagano la quota annuale per farsi rappresentare).
+
+**KPI:** Tesserati Totali, Attivi, Scaduti, Sospesi
+**Lista:** Nome impresa, città, P.IVA, anno, quota, stato (badge colorato)
+**Filtro:** Per stato (attivo/scaduto/sospeso/revocato)
+**Icona Occhio:** Apre dialog fullscreen "Scheda Associato" con:
+- Badge tipo impresa: **Ambulante** (icona Truck, arancione) o **Negozio Fisso** (icona Store, viola) — determinato da `descrizione_ateco` (contiene "ambulante" → ambulante, altrimenti negozio fisso)
+- Badge stato tessera: ATTIVO (verde), SCADUTO (rosso), SOSPESO (giallo), REVOCATO (grigio)
+- **Dati Impresa:** denominazione, CF, P.IVA, settore, indirizzo, codice ATECO, telefono, email, PEC
+- **Dati Tessera:** numero tessera, data iscrizione, **scadenza tessera**, data rinnovo, importo annuale, importo pagato, **stato pagamento** (Pagato/Da Pagare/Non definito), metodo pagamento
+- **Pratiche SCIA:** lista pratiche dell'impresa con CUI, tipo, stato, score, mercato, posteggio
+- **Concessioni:** lista concessioni dell'impresa con protocollo, tipo, stato, scadenza, mercato
+
+**Posizione nel layout:** 4° sotto-tab in Enti & Associazioni (dopo SCIA & Pratiche), visibile SOLO in impersonazione associazione
+
+### Pannello Anagrafica (`AnagraficaAssociazionePanel.tsx`)
+
+Mostra i dati anagrafici dell'associazione impersonificata (nome, CF, P.IVA, PEC, indirizzo, etc.) con possibilità di modifica.
+
+### Tabella Database `tesseramenti_associazione`
+
+```sql
+CREATE TABLE IF NOT EXISTS tesseramenti_associazione (
+  id SERIAL PRIMARY KEY,
+  associazione_id INTEGER NOT NULL,
+  impresa_id INTEGER NOT NULL,
+  numero_tessera VARCHAR(50),
+  data_iscrizione DATE DEFAULT CURRENT_DATE,
+  data_scadenza DATE,
+  anno_riferimento INTEGER DEFAULT EXTRACT(YEAR FROM CURRENT_DATE),
+  quota_annuale NUMERIC(10,2) DEFAULT 0,
+  quota_pagata NUMERIC(10,2) DEFAULT 0,
+  stato VARCHAR(20) DEFAULT 'attivo',  -- attivo, scaduto, sospeso, revocato
+  categoria_associativa VARCHAR(100),
+  note TEXT,
+  data_ultimo_pagamento DATE,
+  metodo_pagamento VARCHAR(50),
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW(),
+  UNIQUE(associazione_id, impresa_id, anno_riferimento)
+);
+```
+
+### API Endpoints Associazioni
+
+| Endpoint | Metodo | Descrizione |
+|---|---|---|
+| `/api/associazioni` | GET | Lista associazioni (paginata, con ricerca) |
+| `/api/associazioni` | POST | Crea nuova associazione |
+| `/api/associazioni/:id` | GET | Dettaglio associazione |
+| `/api/associazioni/:id` | PUT | Aggiorna associazione |
+| `/api/associazioni/:id` | DELETE | Elimina associazione |
+| `/api/associazioni/:id/tesseramenti` | GET | Lista tesserati (con JOIN imprese) |
+| `/api/associazioni/:id/tesseramenti?stats_only=true` | GET | Stats aggregate tesseramenti |
+| `/api/associazioni/:id/tesseramenti` | POST | Crea tesseramento |
+| `/api/associazioni/:id/tesseramenti/:tid` | PUT | Aggiorna tesseramento |
+| `/api/associazioni/:id/tesseramenti/:tid` | DELETE | Elimina tesseramento |
+| `/api/associazioni/:id/tesseramenti/:tid/scheda` | GET | **Scheda completa associato:** dati impresa, dati tessera (scadenza, stato pagamento), tipo impresa (ambulante/negozio_fisso), pratiche SCIA collegate, concessioni collegate |
+| `/api/associazioni/:id/contratti` | GET | Lista contratti associazione |
+| `/api/associazioni/:id/fatture` | GET | Lista fatture associazione |
+| `/api/associazioni/:id/servizi` | GET | Lista servizi associazione |
+| `/api/associazioni/:id/bandi` | GET | Lista bandi associazione |
+| `/api/imprese?associazione_id=X` | GET | Imprese filtrate per associazione (cerca in `tesseramenti_associazione` UNION `richieste_servizi`) |
+
+### Rischio Regressione Comuni: NESSUNO
+
+Le modifiche sono state progettate per **adattarsi al sistema esistente senza toccarlo**:
+- `addComuneIdToUrl()` **NON modificato** — i 15+ file che lo usano continuano a funzionare
+- Il flusso impersonificazione comuni è invariato: `comune_id` viene valutato PRIMA di `associazione_id`
+- Il `SuapPanel` nel tab SSO SUAP viene montato SENZA la prop `mode`, quindi `mode = 'suap'` (default) → tutto il codice originale funziona identico
+- Nessuna modifica al backend dei comuni
+
+### Architettura Tab per Associazioni (v8.13.0)
+
+**IMPORTANTE:** I tab SSO SUAP e Associazioni (TPAS) NON sono visibili per le associazioni.
+
+La sezione SUAP per le associazioni è dentro:
+```
+Enti & Associazioni (tab principale)
+  ├─ Enti Formatori
+  ├─ Associazioni & Bandi
+  ├─ SCIA & Pratiche → SuapPanel mode='associazione'
+  └─ Associati → PresenzeAssociatiPanel (solo in impersonazione)
+```
+
+Il tab "Associazioni" (TPAS) è la sezione ADMIN per gestire tutte le associazioni (CRUD, lista, "Accedi come"). NON deve essere visibile quando si è già in impersonazione associazione.
+
+### Filtri SUAP per Associazione (v8.13.0)
+
+| Componente | File | Filtro | Stato |
+|---|---|---|---|
+| Stats Dashboard | `SuapPanel.tsx` → `api/suap.ts` | `addAssociazioneIdToUrl` | ✅ Funzionante |
+| Lista Pratiche | `SuapPanel.tsx` → `api/suap.ts` | `addAssociazioneIdToUrl` | ✅ Funzionante |
+| Lista Concessioni | `SuapPanel.tsx` loadConcessioni | `addAssociazioneIdToUrl` | ✅ Funzionante |
+| Domande Spunta (dashboard) | `SuapPanel.tsx` loadDomandeSpuntaDashboard | `addAssociazioneIdToUrl` | ✅ Funzionante |
+| Domande Spunta (lista) | `ListaDomandeSpuntaSuap.tsx` fetchDomande | `addAssociazioneIdToUrl` | ✅ Fix v8.13.0 |
+| Notifiche SUAP | `SuapPanel.tsx` | `addAssociazioneIdToUrl` | ✅ Funzionante |
+
+**Backend filtri:**
+- `suap_pratiche.associazione_id = $N` — filtro diretto sulla colonna
+- `concessions`: JOIN su `suap_pratiche` con cast `scia_id::uuid`
+- `domande-spunta`: JOIN su `tesseramenti_associazione` via `impresa_id`
+
+### Type Mismatch Noti (v8.13.0)
+
+| Tabella A | Colonna | Tipo | Tabella B | Colonna | Tipo | Fix |
+|---|---|---|---|---|---|---|
+| `concessions` | `scia_id` | text | `suap_pratiche` | `id` | uuid | Cast `scia_id::uuid` |
+| `suap_pratiche` | `impresa_id` | uuid | `tesseramenti_associazione` | `impresa_id` | integer | Cast `::text` su entrambi |
+| `suap_pratiche` | `mercato_id` | varchar | `markets` | `id` | integer | Cast `::text` su entrambi |
+
+### Fix Sicurezza (v8.12.0)
+
+| Vulnerabilità | File | Fix |
+|---|---|---|
+| `eval()` — esecuzione codice arbitrario | `MessageContent.tsx` | Rimosso `eval()`, sostituito con parser sicuro |
+| XSS `innerHTML` — dati utente in HTML non escapato | `DashboardPA.tsx:5040` | Sostituito `dangerouslySetInnerHTML` con rendering React sicuro |
+| Firebase API Key hardcoded | Codice sorgente | Chiave spostata in variabile d'ambiente |
+
+### Metriche Sistema Aggiornate (22 Feb 2026)
+
+| Metrica | Valore |
+|---|---|
+| Componenti React | 147 |
+| Tabelle DB | 68 (riconteggio reale) |
+| Router tRPC | 15 |
+| Endpoint REST | 428+ (328 REST + 100+ tRPC) |
+| Righe codice frontend | 106K (solo frontend attivo) |
+| Righe DashboardPA.tsx | 7.080 |
+| Tab DashboardPA | 32 |
+| Tipi `any` | 553 |
+| `useMemo`/`useCallback` | 122 (27 + 95) |
+
+
+---
+
+## 🔄 AGGIORNAMENTO SESSIONE 23 FEBBRAIO 2026 (v8.15.0 → v8.16.0)
+
+> **Data:** 23 Febbraio 2026  
+> **Sessione:** Notte 22-23 Feb  
+> **Stato:** Tutte le modifiche deployate e funzionanti
+
+---
+
+### 📋 RIEPILOGO COMPLETO MODIFICHE
+
+#### Fix v8.15.0 (Sessione precedente — SUAP)
+
+| # | Fix | File | Dettaglio |
+|---|-----|------|-----------|
+| 1 | Banner APPROVED verde | `SuapPanel.tsx` | Banner "Pratica SCIA Espletata con Esito Positivo" quando stato=APPROVED |
+| 2 | Dashboard associazione pratiche | `SuapPanel.tsx` | INTEGRATION_NEEDED incluso nel riquadro "Pratiche Pendenti" |
+| 3 | Semaforo colori scheda associato | `PresenzeAssociatiPanel.tsx` | Badge colori: verde APPROVED, rosso REJECTED, arancione INTEGRATION_NEEDED, blu IN_LAVORAZIONE |
+| 4 | Click pratica/concessione scheda | `PresenzeAssociatiPanel.tsx` + `SuapPanel.tsx` + `DashboardPA.tsx` | Click apre dettaglio pratica/concessione con navigazione tab automatica |
+| 5 | Notifica impresa con posteggio | `concessions.js` | Aggiunto `Post. ${stallData.number}` nelle notifiche concessione |
+| 6 | Nomi check banner regolarizzazione | `SuapPanel.tsx` | Usa `check_code` e `dettaglio.motivo` invece di campi inesistenti |
+| 7 | Tab modifica scheda associato | `PresenzeAssociatiPanel.tsx` | Bottone matita per editare N. Tessera, Scadenza, Importi, Stato Pagamento |
+| 8 | Nega Pratica + Richiedi Regolarizzazione | `SuapPanel.tsx` + `service.js` | Bottoni rosso/arancione nella vista PA per negare o richiedere integrazione |
+| 9 | associazione_id nel submit SCIA | `SuapPanel.tsx` | Aggiunto associazione_id al praticaData quando si crea SCIA da impersonazione |
+
+#### Fix v8.16.0 (Sessione corrente)
+
+| # | Fix | File | Dettaglio |
+|---|-----|------|-----------|
+| 1 | **Domande Spunta filtro case-sensitive** | `domande-spunta.js` (backend) | `stato = 'attivo'` → `UPPER(stato) = 'ATTIVO'` — il DB aveva 'ATTIVO' maiuscolo, il filtro cercava 'attivo' minuscolo. Risultato: da 1 a 6 domande visibili per associazione |
+| 2 | **Navigazione pratica da scheda associato** | `SuapPanel.tsx` + `DashboardPA.tsx` | Aggiunto listener `navigate-to-pratica` e `navigate-to-concessione`. DashboardPA sotto-tab Enti&Associazioni ora controllato (`value={docsSubTab}`) per switch programmatico da "Associati" a "SCIA & Pratiche" |
+
+#### COMMIT
+
+| Repo | Commit | Descrizione |
+|------|--------|-------------|
+| `dms-hub-app-new` | `1ef778f` | associazione_id nel submit SCIA |
+| `dms-hub-app-new` | `b0217b0` | Nega Pratica + Regolarizzazione + Banner + Semafori + Check + Modifica Scheda |
+| `dms-hub-app-new` | `dad8150` | Fix 7 issues SUAP completi |
+| `dms-hub-app-new` | `aa8e099` | Fix domande spunta filtro + navigazione pratica da scheda |
+| `mihub-backend-rest` | `afa910d` | Notifiche REJECTED/INTEGRATION_NEEDED |
+| `mihub-backend-rest` | `e131ae3` | Fix notifica posteggio concessione |
+| `mihub-backend-rest` | `5ccb45f` | Fix domande spunta filtro case-sensitive |
+
+#### STATO ALLINEAMENTO
+
+| Componente | Branch | Commit | Deploy |
+|------------|--------|--------|--------|
+| Frontend (Vercel) | `master` | `aa8e099` | Auto-deploy ✅ |
+| Frontend | `claude/review-production-fixes-3sUvQ` | Da allineare | — |
+| Backend (Hetzner) | `master` | `5ccb45f` | Auto-deploy GitHub Actions ✅ |
+
+### ⚠️ BUG NOTI DA INVESTIGARE
+
+| Errore | Tipo | Severità | Dettaglio |
+|--------|------|----------|-----------|
+| `GET /api/trpc/system.health` 404 | Frontend | MEDIUM | Vecchio client tRPC residuo chiama endpoint inesistente |
+| `POST /api/auth/firebase-session` 500 | Backend | HIGH | Errore intermittente login Firebase — possibile colonna mancante o token malformato |
